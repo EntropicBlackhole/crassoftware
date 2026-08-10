@@ -1,0 +1,920 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>cras software / tvbox apk installer</title>
+    <style>
+      :root {
+        --bg-base: #0a0a0a;
+        --bg-surface: #111111;
+        --bg-surface-hover: #1a1a1a;
+        --text-main: #ededed;
+        --text-muted: #888888;
+        --accent: #0070f3;
+
+        --border: #333333;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, "Space Mono", BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+        background-color: var(--bg-base);
+        color: var(--text-main);
+        line-height: 1.6;
+        overflow-y: scroll;
+      }
+      .logo {
+        font-weight: 600;
+        letter-spacing: -0.02em;
+      }
+
+      /* nav & toggle */
+      nav {
+        padding: 20px 40px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        top: 0;
+        width: 100%;
+        position: fixed;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(4px);
+        z-index: 999;
+      }
+      .nav-controls {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+      }
+      nav a {
+        color: var(--text-muted);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.2s;
+        width: max-content;
+        display: inline-block;
+      }
+      nav a:hover {
+        color: var(--text-main);
+      }
+      .lang-toggle {
+        position: relative;
+        display: flex;
+        background-color: var(--bg-base);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 3px;
+        cursor: pointer;
+        user-select: none;
+      }
+      .slider {
+        position: absolute;
+        top: 3px;
+        bottom: 3px;
+        left: 3px;
+        width: calc(50% - 3px);
+        background-color: var(--bg-surface-hover);
+        border-radius: 4px;
+        transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+        border: 1px solid var(--border);
+      }
+      .lang-toggle[data-active="es"] .slider {
+        transform: translateX(100%);
+      }
+      .lang-btn {
+        position: relative;
+        z-index: 1;
+        background: transparent;
+        border: none;
+        color: var(--text-muted);
+        padding: 4px 12px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        cursor: pointer;
+        transition: color 0.25s;
+      }
+      .lang-toggle[data-active="en"] .lang-btn[data-lang="en"],
+      .lang-toggle[data-active="es"] .lang-btn[data-lang="es"] {
+        color: var(--text-main);
+      }
+
+      /* hero section */
+      .hero {
+        max-width: 1000px;
+        margin: 200px auto 60px;
+        text-align: center;
+        padding: 0 20px;
+        margin-top: 150px;
+        margin-bottom: 150px;
+        max-height: 400px;
+        height: 350px;
+      }
+      .hero h1 {
+        font-size: 3.5rem;
+        letter-spacing: -0.05em;
+        line-height: 1.1;
+        margin-bottom: 20px;
+      }
+      .hero p {
+        font-size: 1.2rem;
+        color: var(--text-muted);
+        margin-bottom: 40px;
+        max-width: 600px;
+        margin-inline: auto;
+      }
+
+      /* explicitly define the custom property for mathematical interpolation */
+      @property --fill-angle {
+        syntax: "<angle>";
+        initial-value: 360deg;
+        inherits: false;
+      }
+
+      .cta-btn {
+        color: var(--bg-base);
+        font-weight: 600;
+        font-size: 1.1rem;
+        padding: 15px 35px;
+        border-radius: 6px;
+        text-decoration: none;
+        display: inline-block;
+
+        border: 2px solid transparent;
+
+        background:
+          linear-gradient(var(--text-main), var(--text-main)) padding-box,
+          conic-gradient(var(--text-main) var(--fill-angle), var(--accent) 0)
+            border-box;
+
+        transition:
+          transform 0.2s ease,
+          color 0.2s ease,
+          --fill-angle 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+      }
+
+      .cta-btn:hover {
+        transform: translateY(-2px);
+        color: var(--accent);
+        /* fills the border completely on hover */
+        --fill-angle: 0deg;
+      }
+      .version-tag {
+        display: block;
+        margin-top: 12px;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+      }
+
+      /* visual showcase */
+
+      .showcase-preview {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        max-width: 450px;
+        width: 100%;
+        margin-top: 25px;
+        margin: 0 auto;
+      }
+      .ghost-btn {
+        border: 1px solid var(--border, #333);
+        padding: 12px;
+        text-align: center;
+        color: var(--text-main, #fff);
+        text-decoration: none;
+        font-family: monospace;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+        border-radius: 4px; /* Optional: remove if you want razor-sharp corners */
+      }
+
+      .ghost-btn:hover:not(.disabled) {
+        border-color: var(--accent);
+        color: var(--accent);
+        background: rgba(0, 123, 255, 0.05); /* Very subtle accent glow */
+      }
+
+      .ghost-btn.disabled {
+        border-color: #222;
+        color: #555;
+        cursor: not-allowed;
+      }
+
+      .demo-not-available {
+        font-family: "Space Mono", monospace;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        margin-top: -10px;
+        margin-bottom: 25px;
+        opacity: 0;
+        transform: translateY(-4px);
+        transition:
+          opacity 0.3s ease,
+          transform 0.3s ease;
+        text-transform: lowercase;
+        width: max-content;
+      }
+
+      .ghost-btn:hover + .demo-not-available {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* bento box grid */
+      .bento-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        max-width: 1000px;
+        margin: 0 auto 60px;
+        padding: 0 20px;
+      }
+      .bento-wide {
+        grid-column: 1 / -1;
+      }
+      .bento-card {
+        background-color: var(--bg-surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 30px;
+        transition: border-color 0.2s;
+      }
+      .bento-card:hover {
+        border-color: var(--accent);
+      }
+      .bento-card h3 {
+        margin-bottom: 15px;
+        font-size: 1.3rem;
+      }
+      .bento-card p {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+      }
+
+      @media (max-width: 768px) {
+        .bento-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .bento-wide {
+          grid-column: auto;
+        }
+      }
+
+      /* pricing section */
+      .pricing-section {
+        max-width: 1000px;
+        margin: 0 auto 100px;
+        padding: 0 20px;
+      }
+      .pricing-section h2 {
+        font-size: 2rem;
+        margin-bottom: 40px;
+        text-align: center;
+        letter-spacing: -0.02em;
+      }
+      .pricing-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 24px;
+      }
+
+      .pricing-card {
+        background-color: var(--bg-surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow: hidden;
+      }
+      .pricing-card.highlight {
+        border-color: var(--accent);
+      }
+      .pricing-card.highlight::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background-color: var(--accent);
+      }
+
+      .pricing-tier {
+        font-size: 1.1rem;
+        color: var(--text-muted);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 15px;
+      }
+      .pricing-price {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        letter-spacing: -0.03em;
+      }
+      .pricing-price span {
+        font-size: 1.2rem;
+        color: var(--text-muted);
+        font-weight: 400;
+      }
+
+      .pricing-features {
+        list-style: none;
+        margin-bottom: 40px;
+        flex-grow: 1;
+      }
+      .pricing-features li {
+        margin-bottom: 12px;
+        color: var(--text-main);
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .pricing-features li::before {
+        content: "✓";
+        color: var(--accent);
+        font-weight: bold;
+      }
+
+      .pricing-cta {
+        display: block;
+        text-align: center;
+        background-color: var(--text-main);
+        color: var(--bg-base);
+        border: 1px solid var(--border);
+        padding: 12px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.2s;
+        border: 2px solid transparent;
+
+        background:
+          linear-gradient(var(--text-main), var(--text-main)) padding-box,
+          conic-gradient(var(--text-main) var(--fill-angle), var(--accent) 0)
+            border-box;
+
+        transition:
+          transform 0.2s ease,
+          color 0.2s ease,
+          --fill-angle 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+      }
+
+      .pricing-cta:hover {
+        background-color: white;
+        transform: translateY(-2px);
+        color: var(--accent);
+        --fill-angle: 0deg;
+      }
+
+      /* compatibility table */
+      .compatibility-section {
+        max-width: 1000px;
+        margin: 0 auto 100px;
+        padding: 0 20px;
+      }
+      .compatibility-section h2 {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+        letter-spacing: -0.02em;
+      }
+      .table-wrapper {
+        background-color: var(--bg-surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow-x: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+      }
+      th,
+      td {
+        padding: 16px 24px;
+        border-bottom: 1px solid var(--border);
+      }
+      th {
+        color: var(--text-muted);
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      .status-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .supported {
+        background-color: rgba(0, 112, 243, 0.1);
+        border: 1px solid rgba(0, 112, 243, 0.25);
+        color: #0070f3;
+      }
+      .unconfirmed {
+        background-color: rgba(245, 166, 35, 0.1);
+        border: 1px solid rgba(245, 166, 35, 0.25);
+        color: #f5a623;
+      }
+      .unsupported {
+        background-color: rgba(255, 51, 51, 0.1);
+        border: 1px solid rgba(255, 51, 51, 0.25);
+        color: #ff3333;
+      }
+
+      /* footer */
+      footer {
+        padding: 60px 20px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+      .footer-brand {
+        font-weight: 600;
+        font-size: 1.2rem;
+        letter-spacing: -0.02em;
+      }
+      .footer-contact {
+        display: flex;
+        gap: 30px;
+        color: var(--text-muted);
+        font-size: 0.95rem;
+      }
+      .footer-contact a {
+        color: var(--text-muted);
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+      .footer-contact a:hover {
+        color: var(--text-main);
+      }
+      .footer-copyright {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="logo">
+        <a href="/saas">cras software</a>
+        <span style="color: var(--accent)">/</span>
+        <a href="/saas/tvbox-apk-installer" style="color: var(--text-main)"
+          >tvbox apk installer</a
+        >
+      </div>
+
+      <div class="nav-controls">
+        <div class="lang-toggle" id="lang-toggle" data-active="es">
+          <div class="slider"></div>
+          <button class="lang-btn" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="es">ES</button>
+        </div>
+        <a href="/saas" data-i18n="nav-back">← volver al catálogo</a>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <h1 data-i18n="hero-title">
+        aprovisionamiento zero-touch para android tv.
+      </h1>
+      <p data-i18n="hero-desc">
+        un cliente nativo de windows en c++ altamente optimizado de 5mb.
+        despliega apks de forma inalámbrica a cualquier tv box android usando
+        descubrimiento mdns y servicios adb integrados. no se requiere línea de
+        comandos.
+      </p>
+
+      <a
+        href="https://github.com/EntropicBlackhole/saas_downloadables/releases/latest/download/tvbox_deployer_setup.exe"
+        class="cta-btn"
+        data-i18n="hero-cta"
+        >descargar para windows</a
+      >
+      <span class="version-tag" data-i18n="hero-tag"
+        >v2.0.4 - estable | 4.72 mb</span
+      >
+    </section>
+
+    <section class="showcase-preview">
+      <a class="ghost-btn" href="/saas/tvbox-apk-installer/demo"
+        ><h2 data-i18n="demo-tag">ver demo ></h2></a
+      >
+
+      <a class="ghost-btn disabled"
+        ><h2 data-i18n="video-tag">ver video ></h2></a
+      >
+      <div id="dict-footnote" class="demo-not-available"></div>
+    </section>
+
+    <section class="bento-grid">
+      <div class="bento-card bento-wide">
+        <h3 data-i18n="bento-1-title">
+          <span style="color: var(--accent)">60 veces</span> más productividad
+        </h3>
+        <p data-i18n="bento-1-desc">
+          de 5 minutos a solo 15 segundos por apk. instala un lote de 10 apks en
+          2-3 minutos en lugar de perder una hora. escala tu producción diaria y
+          maximiza la rentabilidad de tu tiempo sin esfuerzo manual
+        </p>
+      </div>
+      <div class="bento-card">
+        <h3 data-i18n="bento-2-title">
+          los apks son tuyos
+          <span style="color: var(--accent)">para siempre</span>
+        </h3>
+        <p data-i18n="bento-2-desc">
+          evita portales de anuncios y bucles de redirección de mediafire.
+          escribe un código corto y nuestro analizador regex personalizado
+          extrae el flujo binario sin procesar directamente a tu disco local.
+        </p>
+      </div>
+      <div class="bento-card">
+        <h3 data-i18n="bento-3-title">
+          instalacion 100% <span style="color: var(--accent)">inalambrica</span>
+        </h3>
+        <p data-i18n="bento-3-desc">
+          nunca ejecutes una versión desactualizada. el cliente consulta de
+          forma segura nuestro oráculo en nodejs y ejecuta un traspaso de
+          proceso silencioso e independiente para actualizar el registro del
+          sistema en segundo plano.
+        </p>
+      </div>
+    </section>
+
+    <section class="pricing-section" id="pricing">
+      <h2 data-i18n="pricing-title">licencias simples y directas</h2>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div class="pricing-tier" data-i18n="pricing-tier-1">standard</div>
+          <div class="pricing-price">
+            S/50<span data-i18n="pricing-tier-1-unit"> /mo</span>
+          </div>
+          <ul class="pricing-features">
+            <li data-i18n="feat-1.1">licencia vitalicia para 1 pc</li>
+            <li data-i18n="feat-1.2">ideal para tecnicos independientes</li>
+            <li data-i18n="feat-1.3">recuperas tu inversion rapidamente</li>
+          </ul>
+        </div>
+
+        <div class="pricing-card highlight">
+          <div class="pricing-tier" data-i18n="pricing-tier-2">oferta</div>
+          <div class="pricing-price">
+            S/75<span data-i18n="pricing-tier-2-unit"> /one-time</span>
+          </div>
+          <ul class="pricing-features">
+            <li data-i18n="feat-2.1">licencias vitalicias para 2 pcs</li>
+            <li data-i18n="feat-2.2">ideal para tiendas fisicas con dos tecnicos</li>
+            <li data-i18n="feat-2.3">ahorras S/25 en tu segunda estacion de trabajo</li>
+          </ul>
+        </div>
+      </div>
+      <a
+        href="https://wa.me/51917862194?text=Hola%20cras%20software,%20deseo%20adquirir%20la%20licencia%20para%20TVBox%20APK%20Installer"
+        class="pricing-cta"
+        target="_blank"
+        data-i18n="pricing-btn"
+        style="margin-top: 1.5rem"
+        >contactar ventas</a
+      >
+    </section>
+
+    <section class="compatibility-section">
+      <h2 data-i18n="table-header">compatibilidad de hardware</h2>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th data-i18n="table-col-1">dispositivo</th>
+              <th data-i18n="table-col-2">requisito de sistema</th>
+              <th data-i18n="table-col-3">estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>walmart watchonn 4k+ streaming box</td>
+              <td data-i18n="table-req">
+                android 11+ (depuración inalámbrica)
+              </td>
+              <td>
+                <span
+                  class="status-badge supported"
+                  data-i18n="status-supported"
+                  >soportado</span
+                >
+              </td>
+            </tr>
+            <tr>
+              <td>walmart watchonn 4k streaming box</td>
+              <td data-i18n="table-req">
+                android 11+ (depuración inalámbrica)
+              </td>
+              <td>
+                <span
+                  class="status-badge supported"
+                  data-i18n="status-supported"
+                  >soportado</span
+                >
+              </td>
+            </tr>
+            <tr>
+              <td>walmart watchonn fhd streaming box</td>
+              <td data-i18n="table-req">
+                android 11+ (depuración inalámbrica)
+              </td>
+              <td>
+                <span
+                  class="status-badge supported"
+                  data-i18n="status-supported"
+                  >soportado</span
+                >
+              </td>
+            </tr>
+            <tr>
+              <td>xiaomi mi box s (3rd gen)</td>
+              <td data-i18n="table-req">
+                android 11+ (depuración inalámbrica)
+              </td>
+              <td>
+                <span
+                  class="status-badge supported"
+                  data-i18n="status-supported"
+                  >soportado</span
+                >
+              </td>
+            </tr>
+            <tr>
+              <td>xiaomi mi box s (2nd gen)</td>
+              <td data-i18n="table-req">
+                android 11+ (depuración inalámbrica)
+              </td>
+              <td>
+                <span
+                  class="status-badge supported"
+                  data-i18n="status-supported"
+                  >soportado</span
+                >
+              </td>
+            </tr>
+            <tr>
+              <td>xiaomi mi tvstick (fhd & 4k)</td>
+              <td data-i18n="table-req">
+                android 11+ (depuración inalámbrica)
+              </td>
+              <td>
+                <span
+                  class="status-badge supported"
+                  data-i18n="status-supported"
+                  >soportado</span
+                >
+              </td>
+            </tr>
+            <tr>
+              <td data-i18n="table-generic">tv boxes genéricos (android tv)</td>
+              <td data-i18n="">
+              </td>
+              <td>
+                <span
+                  class="status-badge unconfirmed"
+                  data-i18n="status-unconfirmed"
+                  >sin confirmar</span
+                >
+              </td>
+            </tr>
+            <tr>
+              <td>google chromecast (w/ google tv)</td>
+              <td data-i18n="">
+              </td>
+              <td>
+                <span
+                  class="status-badge unconfirmed"
+                  data-i18n="status-unconfirmed"
+                  >sin confirmar</span
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      <div class="footer-brand">
+        cras software <span style="color: var(--accent)">/</span>
+      </div>
+      <div class="footer-contact">
+        <a href="mailto:hello@devchrisacosta.net">hello@devchrisacosta.net</a>
+        <a href="https://wa.me/51917862194" target="_blank">+51 917 862 194</a>
+      </div>
+      <div class="footer-copyright" data-i18n="footer-text">
+        christopher acosta © 2026. diseñado para la optimización.
+      </div>
+    </footer>
+
+    <script>
+      const i18n = {
+        en: {
+          "nav-back": "< back to catalog",
+          "hero-title": "zero-touch android tv provisioning.",
+          "hero-desc":
+            "a highly optimized, 5mb native c++ windows client. wirelessly deploy apks to any android tv box using mdns discovery and embedded adb daemons. no command line required.",
+          "hero-cta": "download for windows",
+          "hero-tag": "v2.0.4 - stable | 4.72 mb",
+          "demo-tag": "> see demo",
+          "video-tag": "> see video",
+          "dict-def": '<span style="color: var(--accent);">video</span> not available yet',
+          "bento-1-title": 'be <span style="color: var(--accent);">95% faster</span>',
+          "bento-1-desc":
+          "from 5 minutes to 15 seconds per apk. install a batch of 10 apks in 2-3 minutes instead of losing an entire hour. scale your daily production and maximize your time without a sweat",
+          "bento-2-title":
+            'the apks are <span style="color: var(--accent);">yours forever</span>',
+          "bento-2-desc":
+            "forget about depending on expiring codes. import codes from aftvnews directly from the app or use your own local apks. the download is permanent: download once, install infinitely",
+          "bento-3-title":
+            '<span style="color: var(--accent)">100% wireless</span> installation',
+          "bento-3-desc":
+            "no cables between the computer and the tvbox, no slow interfaces, no navigating the screen's keyboard slowly with the remote. our software detects the tvboxes on your wifi network via mDNS and installs everything remotely, silently y securely",
+
+          "pricing-title": "single payment, forever",
+          "pricing-tier-1": "standard",
+          "pricing-tier-2": "offer",
+          "feat-1.1": "lifetime license for 1 pc",
+          "feat-1.2": "ideal for independant technicians",
+          "feat-1.3": "you get back your investment in no time",
+          "feat-2.1": "lifetime licenses for 2 pcs",
+          "feat-2.2": "ideal for physical stores with two technicians",
+          "feat-2.3": "save S/25 on your second workstation",
+          "pricing-btn": "get permanent license",
+          "pricing-tier-1-unit": " /x1",
+          "pricing-tier-2-unit": " /x2",
+          "table-header": "hardware compatibility",
+          "table-col-1": "device",
+          "table-col-2": "system requirement",
+          "table-col-3": "status",
+          "table-req": "android 11+ (wireless debugging)",
+          "table-generic": "generic android tv boxes",
+          "status-supported": "supported",
+          "status-unconfirmed": "unconfirmed",
+          "status-unsupported": "unsupported",
+          "footer-text": "christopher acosta © 2026. software of tomorrow",
+        },
+        es: {
+          "nav-back": "< volver al catálogo",
+          "hero-title": "aprovisionamiento zero-touch para android tv.",
+          "hero-desc":
+            "un cliente nativo de windows en c++ altamente optimizado de 5mb. despliega apks de forma inalámbrica a cualquier tv box android usando descubrimiento mdns y servicios adb integrados. no se requiere línea de comandos.",
+          "hero-cta": "descargar para windows",
+          "hero-tag": "v2.0.4 - estable | 4.72 mb",
+          "demo-tag": "> ver demo",
+          "video-tag": "> ver video",
+          "dict-def": '<span style="color: var(--accent);">video</span> no esta disponible aun',
+
+          "bento-1-title":
+            'trabaja con <span style="color: var(--accent);">95% más productividad</span>',
+          "bento-1-desc":
+            "de 5 minutos a solo 15 segundos por apk. instala un lote de 10 apks en 2-3 minutos en lugar de perder una hora. escala tu producción diaria y maximiza tu tiempo sin esfuerzo manual",
+          "bento-2-title":
+            'los apks son tuyos <span style="color: var(--accent);">para siempre</span>',
+          "bento-2-desc":
+            "olvídate de depender de códigos de tiktok que expiran. importa códigos de aftvnews directamente desde la app o usa tus propios archivos locales. la descarga es permanente: descargas una vez, instalas infinitamente",
+          "bento-3-title":
+            'instalacion <span style="color: var(--accent)">100% inalambrica</span>',
+          "bento-3-desc":
+            "sin cables entre la computadora y el tvbox, sin interfaces lenta, sin navegar el teclado con el control remoto lento. nuestro software detecta los tvboxes en tu red de wifi via mDNS e instala todo de manera remota, silenciosa y segura",
+
+          "pricing-title": "pago unico, para siempre",
+          "pricing-tier-1": "standard",
+          "pricing-tier-2": "oferta",
+          "pricing-tier-1-unit": " x1",
+          "pricing-tier-2-unit": " x2",
+          "feat-1.1": "licencia vitalicia para 1 pc",
+          "feat-1.2": "ideal para tecnicos independientes",
+          "feat-1.3": "recuperas tu inversion rapidamente",
+          "feat-2.1": "licencias vitalicias para 2 pcs",
+          "feat-2.2": "ideal para tiendas fisicas con dos tecnicos",
+          "feat-2.3": "ahorras S/25 en tu segunda estacion de trabajo",
+          "pricing-btn": "obtener licencia permanente",
+
+          "table-header": "compatibilidad de hardware",
+          "table-col-1": "dispositivo",
+          "table-col-2": "requisito de sistema",
+          "table-col-3": "estado",
+          "table-req": "android 11+ (depuración inalámbrica)",
+          "table-generic": "tv boxes genéricos (android tv)",
+          "status-supported": "soportado",
+          "status-unconfirmed": "sin confirmar",
+          "status-unsupported": "no soportado",
+          "footer-text": "christopher acosta © 2026. software del mañana",
+        },
+      };
+
+      function setCookie(name, value, days) {
+        let expires = "";
+        if (days) {
+          const date = new Date();
+          date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+          expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie =
+          name + "=" + (value || "") + expires + "; path=/; SameSite=Lax";
+      }
+
+      function getCookie(name) {
+        const nameEQ = name + "=";
+        const ca = document.cookie.split(";");
+        for (let i = 0; i < ca.length; i++) {
+          let c = ca[i];
+          while (c.charAt(0) === " ") c = c.substring(1, c.length);
+          if (c.indexOf(nameEQ) === 0)
+            return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+      }
+
+      function applyLanguage(lang) {
+        if (!i18n[lang]) lang = "es";
+
+        document.documentElement.lang = lang;
+        document
+          .getElementById("lang-toggle")
+          .setAttribute("data-active", lang);
+
+        const nodes = document.querySelectorAll("[data-i18n]");
+        nodes.forEach((node) => {
+          const key = node.getAttribute("data-i18n");
+          if (i18n[lang][key]) {
+            node.innerHTML = i18n[lang][key];
+          }
+        });
+
+        const whatsappLinks = document.querySelectorAll(
+          'a[href^="https://wa.me"]',
+        );
+        whatsappLinks.forEach((link) => {
+          if (link.classList.contains("pricing-cta")) {
+            const tier =
+              link.getAttribute("data-i18n") === "pricing-btn-1"
+                ? lang === "en"
+                  ? "MONTHLY"
+                  : "MENSUAL"
+                : lang === "en"
+                  ? "LIFETIME"
+                  : "DE POR VIDA";
+            const msg =
+              lang === "en"
+                ? "Hi cras software, I want to purchase the license for TVBox APK Installer"
+                : "Hola cras software, deseo adquirir la licencia para TVBox APK Installer";
+            link.href = `https://wa.me/51917862194?text=${encodeURIComponent(msg)}`;
+          }
+        });
+
+        const footnote = document.getElementById("dict-footnote");
+        if (footnote && i18n[lang]["dict-def"]) {
+          footnote.innerHTML = i18n[lang]["dict-def"];
+        }
+
+        setCookie("pref_lang", lang, 365);
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const savedLang = getCookie("pref_lang") || "es";
+        applyLanguage(savedLang);
+
+        const toggleWrapper = document.getElementById("lang-toggle");
+        toggleWrapper.addEventListener("click", (e) => {
+          if (e.target.classList.contains("lang-btn")) {
+            applyLanguage(e.target.getAttribute("data-lang"));
+          } else {
+            const currentState = toggleWrapper.getAttribute("data-active");
+            applyLanguage(currentState === "en" ? "es" : "en");
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

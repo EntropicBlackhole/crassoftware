@@ -1,0 +1,936 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>cras software / demo</title>
+    <style>
+      html {
+        overflow-y: scroll;
+      }
+      :root {
+        --bg-base: #0a0a0a;
+        --bg-surface: #111111;
+        --bg-surface-hover: #1a1a1a;
+        --text-main: #ededed;
+        --text-muted: #888888;
+        --accent: #0070f3;
+        --border: #333333;
+
+        --tv-bg: #14161a;
+        --tv-surface: #20232a;
+        --tv-highlight: #e8eaed;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, "Space Mono", BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+        background-color: var(--bg-base);
+        color: var(--text-main);
+        height: 100vh;
+        line-height: 1.6;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      /* nav & toggle */
+      nav {
+        padding: 20px 40px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        top: 0;
+        width: 100%;
+        position: fixed;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(4px);
+        z-index: 999;
+      }
+      .nav-controls {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+      }
+      nav a {
+        color: var(--text-muted);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.2s;
+        width: max-content;
+        display: inline-block;
+      }
+      nav a:hover {
+        color: var(--text-main);
+      }
+      .lang-toggle {
+        position: relative;
+        display: flex;
+        background-color: var(--bg-base);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 3px;
+        cursor: pointer;
+        user-select: none;
+      }
+      .slider {
+        position: absolute;
+        top: 3px;
+        bottom: 3px;
+        left: 3px;
+        width: calc(50% - 3px);
+        background-color: var(--bg-surface-hover);
+        border-radius: 4px;
+        transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+        border: 1px solid var(--border);
+      }
+      .lang-toggle[data-active="es"] .slider {
+        transform: translateX(100%);
+      }
+      .lang-btn {
+        position: relative;
+        z-index: 1;
+        background: transparent;
+        border: none;
+        color: var(--text-muted);
+        padding: 4px 12px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        cursor: pointer;
+        transition: color 0.25s;
+      }
+      .lang-toggle[data-active="en"] .lang-btn[data-lang="en"],
+      .lang-toggle[data-active="es"] .lang-btn[data-lang="es"] {
+        color: var(--text-main);
+      }
+
+      .logo {
+        font-weight: 600;
+        letter-spacing: -0.02em;
+      }
+
+      /* The Interactive Grid */
+      .sandbox-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        flex-grow: 1;
+        width: 100%;
+        margin-top: 75px; /* offset nav */
+      }
+      @media (max-width: 900px) {
+        .sandbox-container {
+          grid-template-columns: 1fr;
+          grid-template-rows: 1fr 1fr;
+        }
+      }
+
+      /* Panels */
+      .panel {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+      .panel-software {
+        border-right: 1px solid var(--border);
+      }
+
+      .software-window {
+        width: 100%;
+        max-width: 450px;
+        background: var(--bg-surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        transition:
+          opacity 0.3s,
+          filter 0.3s;
+      }
+
+      .panel-hardware {
+        background-image: var(--bg-base);
+      }
+
+      .tv-bezel {
+        width: 100%;
+        max-width: 600px;
+        aspect-ratio: 16/9;
+        background: #000;
+        border: 4px solid #222;
+        border-radius: 12px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+      }
+
+      /* TV OS Elements */
+      .tv-grid {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+      }
+      .tv-app {
+        width: 80px;
+        height: 50px;
+        background: var(--tv-surface);
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.6rem;
+        color: #888;
+        transition: all 0.3s;
+      }
+      .tv-app.installed {
+        background: var(--accent);
+        color: white;
+        animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+
+      @keyframes popIn {
+        0% {
+          transform: scale(0.8);
+          opacity: 0;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      /* Global Instructions */
+      .director-prompt {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 112, 243, 0.1);
+        border: 1px solid var(--accent);
+        color: var(--accent);
+        padding: 10px 20px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        z-index: 100;
+        pointer-events: none;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+
+      /* Interactive Pulse */
+      .clickable {
+        cursor: pointer;
+        border: 2px dashed var(--accent);
+        animation: pulse-border 1.5s infinite;
+      }
+      @keyframes pulse-border {
+        0% {
+          border-color: rgba(0, 112, 243, 0.2);
+        }
+        50% {
+          border-color: rgba(0, 112, 243, 1);
+        }
+        100% {
+          border-color: rgba(0, 112, 243, 0.2);
+        }
+      }
+
+      .state-dimmed {
+        opacity: 0.3;
+        pointer-events: none;
+        filter: grayscale(100%);
+      }
+
+      /* PC Scrollbars */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="logo">
+        <a href="/saas">cras software</a> <span style="color: var(--accent)">/</span> <a href="/saas/tvbox-apk-installer">tvbox apk
+          installer</a> <span style="color: var(--accent)">/</span> <a href="/saas/tvbox-apk-installer/demo" style="color: var(--text-main);">demo</a>
+      </div>
+      <div class="nav-controls">
+        <div class="lang-toggle" id="lang-toggle" data-active="es">
+          <div class="slider"></div>
+          <button class="lang-btn" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="es">ES</button>
+        </div>
+        <a href="/saas/tvbox-apk-installer/" data-i18n="nav-back"
+          >← volver al producto</a
+        >
+      </div>
+    </nav>
+
+    <div class="sandbox-container">
+      <!-- WINDOWS PC PANEL -->
+      <div class="panel panel-software" id="panel-pc">
+        <div class="software-window state-dimmed" id="app-window">
+          <h3
+            style="
+              font-size: 1rem;
+              margin-bottom: 15px;
+              border-bottom: 1px solid var(--border);
+              padding-bottom: 10px;
+              font-weight: 600;
+            "
+          >
+            tvbox apk installer
+          </h3>
+
+          <!-- Build Queue -->
+          <div
+            style="
+              font-size: 0.75rem;
+              color: var(--text-muted);
+              margin-bottom: 5px;
+              text-transform: uppercase;
+              letter-spacing: 0.05em;
+            "
+            data-i18n="pc-queue"
+          >
+            cola de instalación:
+          </div>
+          <div
+            id="apk-queue"
+            style="
+              background: var(--bg-base);
+              border: 1px solid var(--border);
+              border-radius: 4px;
+              padding: 10px;
+              font-size: 0.8rem;
+              color: var(--text-main);
+              margin-bottom: 15px;
+              max-height: 80px;
+              overflow-y: auto;
+            "
+          >
+            <!-- populated by JS -->
+          </div>
+
+          <!-- Terminal -->
+          <div
+            id="terminal-log"
+            style="
+              font-family: &quot;Space Mono&quot;, monospace;
+              font-size: 0.75rem;
+              color: var(--text-muted);
+              background: #000;
+              padding: 10px;
+              border-radius: 4px;
+              height: 110px;
+              margin-bottom: 20px;
+              overflow-y: auto;
+            "
+          >
+            <span id="term-init">[*] inicializando motor mdns...</span>
+          </div>
+
+          <input
+            type="text"
+            id="pin-input"
+            placeholder="PIN"
+            disabled
+            style="
+              width: 100%;
+              padding: 10px;
+              margin-bottom: 15px;
+              background: var(--bg-base);
+              border: 1px solid var(--border);
+              color: var(--text-main);
+              border-radius: 4px;
+              font-family: &quot;Space Mono&quot;, monospace;
+              letter-spacing: 2px;
+            "
+          />
+
+          <button
+            id="btn-deploy"
+            disabled
+            style="
+              width: 100%;
+              padding: 12px;
+              background: var(--border);
+              color: var(--text-muted);
+              border: none;
+              border-radius: 4px;
+              font-weight: bold;
+            "
+          >
+            <span id="btn-deploy-text">INSTALAR APKS</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- TV HARDWARE PANEL -->
+      <div class="panel panel-hardware" id="panel-tv">
+        <div class="director-prompt" id="prompt-text">
+          paso 1: abre la configuración de la tv
+        </div>
+
+        <div class="tv-bezel">
+          <div
+            id="tv-screen"
+            style="
+              width: 100%;
+              height: 100%;
+              padding: 25px;
+              background: var(--tv-bg);
+              color: var(--tv-highlight);
+              font-family: sans-serif;
+              position: relative;
+              overflow: hidden;
+            "
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const payloadAPKs = [
+        "NetMirror.apk",
+        "Player_pro+_v4.0.7.apk",
+        "SportzX_2.6v.apk",
+        "TizenTube_v1.0.3.apk",
+        "Xuper_Hydra_4k.apk",
+        "Xuper_TV_4.34.apk",
+      ];
+
+      const apkLogos = {
+        "NetMirror.apk": `
+          <svg viewBox="0 0 24 24" width="22" height="22" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="nm-left" x1="0%" y1="100%" x2="0%" y2="0%">
+                <stop offset="0%" stop-color="#b30000" />
+                <stop offset="100%" stop-color="#ff1a1a" />
+              </linearGradient>
+              <linearGradient id="nm-mid" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#7a0000" />
+                <stop offset="40%" stop-color="#ff1a1a" />
+                <stop offset="100%" stop-color="#ff1a1a" />
+              </linearGradient>
+              <linearGradient id="nm-right" x1="0%" y1="100%" x2="0%" y2="0%">
+                <stop offset="0%" stop-color="#4d0000" />
+                <stop offset="100%" stop-color="#ff1a1a" />
+              </linearGradient>
+            </defs>
+            <circle cx="12" cy="12" r="12" fill="#111111" />
+            <!-- Back Layer: Right Stem -->
+            <path d="M 14 18 C 17 18 19 12 18 7" stroke="url(#nm-right)" stroke-width="4.5" stroke-linecap="round" fill="none" />
+            <!-- Mid Layer: Diagonal -->
+            <path d="M 10 6 C 13 6 11 18 14 18" stroke="url(#nm-mid)" stroke-width="4.5" stroke-linecap="round" fill="none" />
+            <!-- Front Layer: Left Stem -->
+            <path d="M 6 17 C 5 10 7 6 10 6" stroke="url(#nm-left)" stroke-width="4.5" stroke-linecap="round" fill="none" />
+          </svg>
+        `,
+        "Player_pro+_v4.0.7.apk": `
+          <svg viewBox="0 0 24 24" width="22" height="22" xmlns="http://www.w3.org/2000/svg">
+            <!-- Dark Navy App Background -->
+            <rect width="24" height="24" rx="5" fill="#06092b" />
+
+            <!-- Cyan Screen Glare -->
+            <path d="M 12.5 8.5 C 17 8 19.5 10 19.5 13.5 C 19.5 17 16 18 14 18 C 11 18 11.5 11 12.5 8.5 Z" fill="#00e1ff" />
+
+            <!-- White Retro TV Wireframe Arc -->
+            <path d="M 4 12 C 8 7 16 7 20 12 C 21 14 20 17 18 19" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" fill="none" />
+
+            <!-- TV Antennae -->
+            <line x1="9" y1="4" x2="11.5" y2="7.8" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" />
+            <line x1="15" y1="3" x2="12.5" y2="7.5" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" />
+
+            <!-- Cyan Play Button -->
+            <polygon points="5,14 5,20 10,17" fill="#00e1ff" />
+          </svg>
+        `,
+        "SportzX_2.6v.apk": `
+          <svg viewBox="0 0 24 24" width="22" height="22" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="sportzx-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#3b82f6" />
+                <stop offset="50%" stop-color="#8b5cf6" />
+                <stop offset="100%" stop-color="#d946ef" />
+              </linearGradient>
+            </defs>
+            <circle cx="12" cy="12" r="12" fill="#111111" />
+            <!-- Top/Right Stroke (Top half of the 'S') -->
+            <path d="M 11.5 10.5 L 6 5 L 18 12 L 16 13.17" stroke="url(#sportzx-grad)" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round" fill="none" />
+            <!-- Bottom/Left Stroke (Bottom half of the 'S') -->
+            <path d="M 9.5 12.2 L 12.5 15.2 L 6 19 L 6 10" stroke="url(#sportzx-grad)" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round" fill="none" />
+          </svg>
+        `,
+        "TizenTube_v1.0.3.apk": `
+          <svg viewBox="0 0 24 24" width="22" height="22" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="tizen-bg" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#4fd1ff" />
+                <stop offset="100%" stop-color="#d6f0ff" />
+              </linearGradient>
+            </defs>
+            <!-- Background Gradient Square -->
+            <rect width="24" height="24" rx="5" fill="url(#tizen-bg)" />
+
+            <!-- White Base Circle -->
+            <circle cx="11.5" cy="12" r="7.5" fill="#ffffff" />
+
+            <!-- Top Right Cyan Sector -->
+            <path d="M 7.5 7.5 L 17 12.5 A 7.5 7.5 0 0 0 11.5 4.5 Z" fill="#00b4d8" />
+
+            <!-- Inner Play Triangle (Soft Blue) -->
+            <polygon points="7.5,7.5 7.5,16.5 17,12.5" fill="#b5e2fa" />
+
+            <!-- Heavy Dark Plum Strokes -->
+            <circle cx="11.5" cy="12" r="7.5" fill="none" stroke="#4a2c4a" stroke-width="2" />
+            <polygon points="7.5,7.5 7.5,16.5 17,12.5" fill="none" stroke="#4a2c4a" stroke-width="2" stroke-linejoin="round" />
+          </svg>
+        `,
+        "Xuper_Hydra_4k.apk": `
+          <svg viewBox="0 0 24 24" width="22" height="22" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <!-- Electric Cyan Bevel -->
+              <linearGradient id="hydra-cyan" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ffffff" />
+                <stop offset="40%" stop-color="#00e1ff" />
+                <stop offset="100%" stop-color="#004e9a" />
+              </linearGradient>
+              <!-- Cold Silver Bevel -->
+              <linearGradient id="hydra-silver" x1="100%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#ffffff" />
+                <stop offset="50%" stop-color="#8a9ba8" />
+                <stop offset="100%" stop-color="#131c26" />
+              </linearGradient>
+            </defs>
+
+            <!-- Deep Space/Navy Background -->
+            <rect width="24" height="24" rx="4" fill="#040a12" />
+
+            <!-- Right Chevron (Metallic Silver - Pushed to back) -->
+            <path d="M 22 4 L 15 4 L 9 12 L 15 20 L 22 20 L 16 12 Z" fill="url(#hydra-silver)" />
+
+            <!-- Left Chevron (Electric Cyan - Pulled to front) -->
+            <path d="M 2 4 L 9 4 L 15 12 L 9 20 L 2 20 L 8 12 Z" fill="url(#hydra-cyan)" />
+
+            <!-- Center Core Glow for 3D Pop -->
+            <polygon points="12,9 15,12 12,15 9,12" fill="#ffffff" opacity="0.6" />
+          </svg>
+        `,
+        "Xuper_TV_4.34.apk": `
+          <svg viewBox="0 0 24 24" width="22" height="22" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <!-- Diagonal Blue Spotlight Background -->
+              <linearGradient id="xtv-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#020612" />
+                <stop offset="30%" stop-color="#020612" />
+                <stop offset="50%" stop-color="#0d3fbd" />
+                <stop offset="70%" stop-color="#020612" />
+                <stop offset="100%" stop-color="#020612" />
+              </linearGradient>
+
+              <!-- Back Bar Metallic (Pushed to background) -->
+              <linearGradient id="xtv-silver-back" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#a0b4c4" />
+                <stop offset="50%" stop-color="#ffffff" />
+                <stop offset="100%" stop-color="#708599" />
+              </linearGradient>
+
+              <!-- Front Track Silver (Pulled to foreground) -->
+              <linearGradient id="xtv-silver-front" x1="0%" y1="100%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#ffffff" />
+                <stop offset="50%" stop-color="#d1dfea" />
+                <stop offset="100%" stop-color="#ffffff" />
+              </linearGradient>
+            </defs>
+
+            <!-- Navy Spotlight Canvas -->
+            <rect width="24" height="24" rx="4" fill="url(#xtv-bg)" />
+
+            <!-- Solid Bar (Top-Left to Bottom-Right) -->
+            <polygon points="5,5 10,5 19,19 14,19" fill="url(#xtv-silver-back)" />
+
+            <!-- Split Track Left (Bottom-Left to Top-Right) -->
+            <polygon points="14,5 15.5,5 6.5,19 5,19" fill="url(#xtv-silver-front)" />
+
+            <!-- Split Track Right (Bottom-Left to Top-Right) -->
+            <polygon points="17.5,5 19,5 10,19 8.5,19" fill="url(#xtv-silver-front)" />
+          </svg>
+        `,
+        default: (name) => name.substring(0, 3).toUpperCase(),
+      };
+
+      const i18n = {
+        en: {
+          "nav-back": "← back to product",
+          "pc-queue": "deployment queue:",
+          "btn-deploy": "INSTALL APKS",
+          "btn-replay": "RUN AGAIN",
+          "btn-installing": "INSTALLING...",
+          "term-init": "[*] initializing mdns engine...",
+          "term-found":
+            "<br>[+] Android TV Box detected (192.168.1.45)<br>[*] awaiting cryptographic PIN...",
+          "term-auth":
+            "<br><span style='color: #00ff00;'>[+] RSA Handshake successful.</span>",
+          "term-inject": "injecting",
+          "step-1": "step 1: open tv settings",
+          "step-2": "step 2: enable wireless debugging",
+          "step-3": "step 3: enter the pin into the client",
+          "step-4": "step 4: deploy the payload",
+          "step-done": "operation completed successfully.",
+          "tv-settings": "Settings",
+          "tv-dev-ops": "Developer Options",
+          "tv-wire-dbg": "Wireless Debugging",
+          "tv-pair-code": "Device Pairing Code",
+          "tv-apps": "Your Apps",
+        },
+        es: {
+          "nav-back": "← volver al producto",
+          "pc-queue": "cola de instalacion:",
+          "btn-deploy": "INSTALAR APKS",
+          "btn-replay": "VOLVER A REPRODUCIR",
+          "btn-installing": "INSTALANDO...",
+          "term-init": "[*] inicializando motor mdns...",
+          "term-found":
+            "<br>[+] Android TV Box detectado (192.168.1.45)<br>[*] esperando PIN criptográfico...",
+          "term-auth":
+            "<br><span style='color: #00ff00;'>[+] rsa handshake exitoso</span>",
+          "term-inject": "inyectando",
+          "step-1": "abre la configuracion de la tv",
+          "step-2": "activa depuracion inalambrica",
+          "step-3": "ingresa el pin en el programa",
+          "step-4": "despliega la carga (payload)",
+          "step-done": "operacion completada",
+          "tv-settings": "Configuracion",
+          "tv-dev-ops": "Opciones de Desarrollador",
+          "tv-wire-dbg": "Depuración Inalámbrica",
+          "tv-pair-code": "Código de vinculación",
+          "tv-apps": "Tus Aplicaciones",
+        },
+      };
+
+      // Cookie Management
+      function setCookie(name, value, days) {
+        let expires = "";
+        if (days) {
+          const date = new Date();
+          date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+          expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie =
+          name + "=" + (value || "") + expires + "; path=/; SameSite=Lax";
+      }
+
+      function getCookie(name) {
+        const nameEQ = name + "=";
+        const ca = document.cookie.split(";");
+        for (let i = 0; i < ca.length; i++) {
+          let c = ca[i];
+          while (c.charAt(0) === " ") c = c.substring(1, c.length);
+          if (c.indexOf(nameEQ) === 0)
+            return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+      }
+
+      function getCurrentLang() {
+        return document.documentElement.lang || "es";
+      }
+
+      function getTranslation(key) {
+        const lang = getCurrentLang();
+        return i18n[lang][key] || i18n["es"][key];
+      }
+
+      function applyLanguage(lang) {
+        if (!i18n[lang]) lang = "es";
+        document.documentElement.lang = lang;
+        document
+          .getElementById("lang-toggle")
+          .setAttribute("data-active", lang);
+
+        const nodes = document.querySelectorAll("[data-i18n]");
+        nodes.forEach((node) => {
+          const key = node.getAttribute("data-i18n");
+          if (i18n[lang][key]) {
+            node.innerHTML = i18n[lang][key];
+          }
+        });
+
+        // Re-render FSM text dynamically
+        document.getElementById("term-init").innerHTML =
+          i18n[lang]["term-init"];
+        document.getElementById("btn-deploy-text").innerHTML =
+          i18n[lang]["btn-deploy"];
+        renderState(currentState);
+
+        setCookie("pref_lang", lang, 365);
+      }
+
+      // FSM Logic
+      let currentState = 0;
+      let randomCode = Math.round(Math.random() * (999999 - 100000) + 100000);
+
+      const promptText = document.getElementById("prompt-text");
+      const tvScreen = document.getElementById("tv-screen");
+      const pcApp = document.getElementById("app-window");
+      const terminalLog = document.getElementById("terminal-log");
+      const pinInput = document.getElementById("pin-input");
+      const btnDeploy = document.getElementById("btn-deploy");
+      const apkQueue = document.getElementById("apk-queue");
+
+      function initSim() {
+        // Populate PC APK Queue
+        apkQueue.innerHTML = payloadAPKs
+          .map((apk) => `<div>📄 ${apk}</div>`)
+          .join("");
+        renderState(0);
+      }
+
+      function advanceState() {
+        currentState++;
+        renderState(currentState);
+      }
+
+      function renderState(state) {
+        const t = (key) => getTranslation(key);
+
+        switch (state) {
+          case 0:
+            promptText.innerText = t("step-1");
+            tvScreen.innerHTML = `
+              <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #333; padding-bottom: 10px;">
+                <div style="font-weight: bold; font-size: 1.2rem;">Android TV</div>
+                <div id="tv-settings-btn" class="clickable" style="background: var(--tv-surface); padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; display: flex; align-items: center; gap: 5px;">
+                  ⚙ ${t("tv-settings")}
+                </div>
+              </div>
+              <div style="margin-top: 20px; font-size: 0.9rem; color: #888;">${t("tv-apps")}</div>
+              <div class="tv-grid" id="tv-home-grid">
+                <div class="tv-app">
+                  <svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#FF0000" d="M21.6 7.2c-.2-1.5-1.4-2.7-2.9-2.9C16.1 4 12 4 12 4s-4.1 0-6.7.3c-1.5.2-2.7 1.4-2.9 2.9C2 9.8 2 12 2 12s0 2.2.4 4.8c.2 1.5 1.4 2.7 2.9 2.9 2.6.3 6.7.3 6.7.3s4.1 0 6.7-.3c1.5-.2 2.7-1.4 2.9-2.9.4-2.6.4-4.8.4-4.8s0-2.2-.4-4.8z"/>
+                    <path fill="#FFFFFF" d="M10 15.5l6-3.5-6-3.5v7z"/>
+                  </svg>
+                </div>
+                <div class="tv-app">
+                  <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#E50914" d="M5.5 3h3l4.5 9.5V3h3v18h-3L8.5 11.5V21h-3V3z"/>
+                  </svg>
+                </div>
+                <div class="tv-app">
+                  <svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#00A8E1" d="M12 18.5c-3.2 0-5.8-1.2-7.5-3L6 17c2 2 5 3.5 8 3.5 3 0 5.5-1 7.2-2.5l-1.5-1.5c-1.5 1.2-3.8 2-6.2 2z"/>
+                    <path fill="#00A8E1" d="M20.0 19.0l2-5-6 1.5 4 5.5z"/>
+                    <text x="12" y="14" font-family="-apple-system, sans-serif" font-weight="900" font-size="18.0" fill="#FFFFFF" text-anchor="middle">a</text>
+                  </svg>
+                </div>
+              </div>
+            `;
+            //
+            document
+              .getElementById("tv-settings-btn")
+              .addEventListener("click", advanceState);
+            break;
+
+          case 1:
+            promptText.innerText = t("step-2");
+            tvScreen.innerHTML = `
+              <div style="display: flex; height: 100%;">
+                <div style="width: 40%; border-right: 1px solid #333; padding-right: 20px; display: flex; flex-direction: column; gap: 15px; color: #888; font-size: 0.9rem;">
+                   <div>Red e Internet</div>
+                   <div>Cuentas e Iniciar sesión</div>
+                   <div>Preferencias del dispositivo</div>
+                   <div style="color: var(--tv-highlight); font-weight: bold; padding-left: 10px; border-left: 2px solid var(--accent);">${t("tv-dev-ops")}</div>
+                </div>
+                <div style="width: 60%; padding-left: 20px;">
+                   <h2 style="font-size: 1.2rem; margin-bottom: 20px;">${t("tv-dev-ops")}</h2>
+                   <div id="tv-debug-toggle" class="clickable" style="padding: 15px; background: var(--tv-surface); border-radius: 6px; display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem;">
+                       <span>${t("tv-wire-dbg")}</span>
+                       <span style="background: #111; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem;">OFF</span>
+                   </div>
+                </div>
+              </div>
+            `;
+            document
+              .getElementById("tv-debug-toggle")
+              .addEventListener("click", advanceState);
+            break;
+
+          case 2:
+            promptText.innerText = t("step-3");
+            tvScreen.innerHTML = `
+               <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+                   <div style="font-size: 2rem; color: var(--accent); margin-bottom: 5px;"><svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
+fill="#ffffff" viewBox="0 0 24 24" >
+<!--Boxicons v3.0.8 https://boxicons.com | License  https://docs.boxicons.com/free-->
+<path d="M15 12c1.65 0 3-1.35 3-3s-1.35-3-3-3-3 1.35-3 3c0 .46.11.89.3 1.29l-1.1 1.1L6.11 6.3a.996.996 0 0 0-1.41 0c-3.35 3.35-3.57 8.66-.67 12.26L2.29 20.3l1.41 1.41 1.73-1.73A9.18 9.18 0 0 0 11.19 22a9.2 9.2 0 0 0 6.51-2.69.996.996 0 0 0 0-1.41l-5.09-5.09 1.1-1.1c.39.19.82.3 1.29.3Zm-8.89 5.89a7.21 7.21 0 0 1-.66-9.43l10.09 10.09a7.21 7.21 0 0 1-9.43-.66M15 8c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1"></path><path d="M19.95 4.05a6.9 6.9 0 0 0-2.32-1.54 7.06 7.06 0 0 0-5.27 0l.75 1.85c1.2-.49 2.57-.49 3.76 0 .62.25 1.18.62 1.65 1.1.48.48.85 1.03 1.1 1.65.24.6.37 1.23.37 1.88s-.12 1.28-.37 1.88l1.85.75c.34-.84.51-1.73.51-2.63s-.17-1.79-.51-2.63c-.35-.87-.87-1.65-1.54-2.32Z"></path>
+</svg></div>
+                   <h3 style="font-size: 1rem; color: #888; margin-bottom: 10px;">${t("tv-pair-code")}</h3>
+                   <h1 style="font-size: 3.5rem; letter-spacing: 12px; font-family: 'Space Mono', monospace;">${randomCode}</h1>
+                   <div style="font-size: 0.8rem; color: #666; margin-top: 10px;">IP: 192.168.1.45:41355</div>
+               </div>
+            `;
+
+            // Wake up PC if not already woken
+            if (pcApp.classList.contains("state-dimmed")) {
+              pcApp.classList.remove("state-dimmed");
+              terminalLog.innerHTML += t("term-found");
+              terminalLog.scrollTop = terminalLog.scrollHeight;
+
+              pinInput.disabled = false;
+              pinInput.classList.add("clickable");
+
+              pinInput.addEventListener("input", (e) => {
+                if (e.target.value == randomCode) advanceState();
+              });
+            }
+            break;
+
+          case 3:
+            promptText.innerText = t("step-4");
+            pinInput.classList.remove("clickable");
+            pinInput.disabled = true;
+
+            // Prevent multiple auth injections on re-render
+            if (!terminalLog.innerHTML.includes("RSA")) {
+              terminalLog.innerHTML += t("term-auth");
+              terminalLog.scrollTop = terminalLog.scrollHeight;
+            }
+
+            btnDeploy.disabled = false;
+            btnDeploy.style.background = "var(--text-main)";
+            btnDeploy.style.color = "var(--bg-base)";
+            btnDeploy.classList.add("clickable");
+
+            // clear old listeners to prevent double execution on language switch
+            const newBtn = btnDeploy.cloneNode(true);
+            btnDeploy.parentNode.replaceChild(newBtn, btnDeploy);
+            newBtn.addEventListener("click", advanceState);
+            break;
+
+          case 4:
+            promptText.innerText = t("btn-installing");
+            const activeBtn = document.getElementById("btn-deploy");
+            activeBtn.classList.remove("clickable");
+            activeBtn.innerHTML = t("btn-installing");
+            activeBtn.disabled = true;
+
+            // Flash back to TV Home Screen with base SVGs
+            tvScreen.innerHTML = `
+              <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #333; padding-bottom: 10px;">
+                <div style="font-weight: bold; font-size: 1.2rem;">Android TV</div>
+              </div>
+              <div style="margin-top: 20px; font-size: 0.9rem; color: #888;">${t("tv-apps")}</div>
+              <div class="tv-grid" id="tv-home-grid">
+                <div class="tv-app">
+                  <svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#FF0000" d="M21.6 7.2c-.2-1.5-1.4-2.7-2.9-2.9C16.1 4 12 4 12 4s-4.1 0-6.7.3c-1.5.2-2.7 1.4-2.9 2.9C2 9.8 2 12 2 12s0 2.2.4 4.8c.2 1.5 1.4 2.7 2.9 2.9 2.6.3 6.7.3 6.7.3s4.1 0 6.7-.3c1.5-.2 2.7-1.4 2.9-2.9.4-2.6.4-4.8.4-4.8s0-2.2-.4-4.8z"/>
+                    <path fill="#FFFFFF" d="M10 15.5l6-3.5-6-3.5v7z"/>
+                  </svg>
+                </div>
+                <div class="tv-app">
+                  <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#E50914" d="M5.5 3h3l4.5 9.5V3h3v18h-3L8.5 11.5V21h-3V3z"/>
+                  </svg>
+                </div>
+                <div class="tv-app">
+                  <svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#00A8E1" d="M12 18.5c-3.2 0-5.8-1.2-7.5-3L6 17c2 2 5 3.5 8 3.5 3 0 5.5-1 7.2-2.5l-1.5-1.5c-1.5 1.2-3.8 2-6.2 2z"/>
+                    <path fill="#00A8E1" d="M20.0 19.0l2-5-6 1.5 4 5.5z"/>
+                    <text x="12" y="14" font-family="-apple-system, sans-serif" font-weight="900" font-size="18.0" fill="#FFFFFF" text-anchor="middle">a</text>
+                  </svg>
+                </div>
+              </div>
+            `;
+
+            const tvGrid = document.getElementById("tv-home-grid");
+            let apkIndex = 0;
+
+            const installLoop = setInterval(() => {
+              if (apkIndex >= payloadAPKs.length) {
+                clearInterval(installLoop);
+                promptText.innerText = t("step-done");
+                terminalLog.innerHTML += `<br><span style='color: var(--accent);'>[*] despliegue finalizado.</span>`;
+                terminalLog.scrollTop = terminalLog.scrollHeight;
+
+                setTimeout(() => {
+                  activeBtn.innerHTML = t("btn-replay");
+                  activeBtn.disabled = false;
+                  activeBtn.style.cursor = "pointer";
+                  activeBtn.addEventListener("mouseenter", () => {
+                    activeBtn.style.border = "1px solid var(--accent)";
+                  });
+                  
+                  activeBtn.addEventListener("mouseleave", () => {
+                    activeBtn.style.border = "1px solid var(--border)";
+                  });
+                  activeBtn.style.background = "var(--bg-surface)";
+                  activeBtn.style.color = "var(--text-main)";
+                  activeBtn.style.border = "1px solid var(--border)";
+                  activeBtn.addEventListener("click", () => location.reload());
+                }, 1000);
+                return;
+              }
+
+              const currentApk = payloadAPKs[apkIndex];
+              terminalLog.innerHTML += `<br>[*] ${t("term-inject")} ${currentApk}... <span style='color: #00ff00;'>[OK]</span>`;
+              terminalLog.scrollTop = terminalLog.scrollHeight;
+
+              // Fetch the mapped SVG or fall back to the text generator
+              const iconContent = apkLogos[currentApk]
+                ? apkLogos[currentApk]
+                : apkLogos["default"](currentApk);
+              console.log(currentApk, apkLogos[currentApk]);
+
+              // ARCHITECTURAL FIX: Use insertAdjacentHTML so we do not re-trigger existing animations
+              tvGrid.insertAdjacentHTML(
+                "beforeend",
+                `<div class="tv-app installed">${iconContent}</div>`,
+              );
+
+              apkIndex++;
+            }, 800);
+
+            break;
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        initSim(); // Initialize data and state 0
+
+        const savedLang = getCookie("pref_lang") || "es";
+        applyLanguage(savedLang);
+
+        const toggleWrapper = document.getElementById("lang-toggle");
+        toggleWrapper.addEventListener("click", (e) => {
+          if (e.target.classList.contains("lang-btn")) {
+            applyLanguage(e.target.getAttribute("data-lang"));
+          } else {
+            const currentStateCode = toggleWrapper.getAttribute("data-active");
+            applyLanguage(currentStateCode === "en" ? "es" : "en");
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

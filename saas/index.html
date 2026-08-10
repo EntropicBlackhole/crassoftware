@@ -1,0 +1,665 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>cras software / catálogo</title>
+    <style>
+      :root {
+        --bg-base: #0a0a0a;
+        --bg-surface: #111111;
+        --bg-surface-hover: #1a1a1a;
+        --text-main: #ededed;
+        --text-muted: #888888;
+        --accent: #0070f3;
+        --border: #333333;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, "Space Mono", BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+        background-color: var(--bg-base);
+        color: var(--text-main);
+        line-height: 1.6;
+        overflow-y: scroll;
+      }
+
+      /* nav & toggle */
+      nav {
+        padding: 20px 40px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        top: 0;
+        width: 100%;
+        position: fixed;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(4px);
+        z-index: 999;
+      }
+
+      .nav-controls {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+      }
+
+      nav a {
+        color: var(--text-muted);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.2s;
+        width: max-content;
+        display: inline-block;
+      }
+
+      nav a:hover {
+        color: var(--text-main);
+      }
+
+      .lang-toggle {
+        position: relative;
+        display: flex;
+        background-color: var(--bg-base);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 3px;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .slider {
+        position: absolute;
+        top: 3px;
+        bottom: 3px;
+        left: 3px;
+        width: calc(50% - 3px);
+        background-color: var(--bg-surface-hover);
+        border-radius: 4px;
+        transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+        border: 1px solid var(--border);
+      }
+
+      .lang-toggle[data-active="es"] .slider {
+        transform: translateX(100%);
+      }
+
+      .lang-btn {
+        position: relative;
+        z-index: 1;
+        background: transparent;
+        border: none;
+        color: var(--text-muted);
+        padding: 4px 12px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        cursor: pointer;
+        transition: color 0.25s;
+      }
+
+      .lang-toggle[data-active="en"] .lang-btn[data-lang="en"],
+      .lang-toggle[data-active="es"] .lang-btn[data-lang="es"] {
+        color: var(--text-main);
+      }
+
+      .logo {
+        font-weight: 600;
+        letter-spacing: -0.02em;
+      }
+
+      /* hero section */
+      #hero-title {
+        font-family: "Space Mono", monospace;
+        text-transform: lowercase;
+        cursor: help; /* elevated cursor to the parent H1 to solve hitbox */
+        max-width: fit-content;
+      }
+
+      .scramble-target {
+        display: inline-block;
+      }
+
+      .dict-definition {
+        font-family: "Space Mono", monospace;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        margin-top: -10px;
+        margin-bottom: 25px;
+        opacity: 0;
+        transform: translateY(-4px);
+        transition:
+          opacity 0.3s ease,
+          transform 0.3s ease;
+        text-transform: lowercase;
+      }
+
+      #hero-title:hover + .dict-definition {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .hero {
+        max-width: 900px;
+        margin: 100px auto 60px;
+        padding: 0 20px;
+      }
+
+      .hero h1 {
+        font-size: 3.5rem;
+        letter-spacing: -0.05em;
+        line-height: 1.1;
+        margin-bottom: 20px;
+      }
+
+      .hero p {
+        font-size: 1.2rem;
+        color: var(--text-muted);
+        max-width: 600px;
+      }
+
+      /* catalog grid */
+      .catalog-section {
+        max-width: 1000px;
+        margin: 0 auto 100px;
+        padding: 0 20px;
+      }
+
+      .catalog-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 24px;
+      }
+
+      .product-card {
+        background-color: var(--bg-surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 30px;
+        transition:
+          border-color 0.2s,
+          transform 0.2s;
+        display: flex;
+        flex-direction: column;
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .product-card:hover {
+        border-color: var(--text-muted);
+        transform: translateY(-2px);
+      }
+
+      .product-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 15px;
+      }
+
+      .product-title {
+        font-size: 1.4rem;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+      }
+
+      .product-status {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--bg-base);
+        background-color: var(--text-main);
+        padding: 4px 8px;
+        border-radius: 4px;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+
+      .product-desc {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        margin-bottom: 24px;
+        flex-grow: 1;
+      }
+
+      /* tag system */
+      .tag-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 24px;
+      }
+
+      .tag-pill {
+        background-color: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border);
+        color: var(--text-muted);
+        font-size: 0.75rem;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-weight: 500;
+      }
+
+      .tag-pill:hover {
+        border: 1px solid var(--accent);
+      }
+
+      .product-link {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--accent);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .product-link::after {
+        content: ">";
+        transition: transform 0.2s;
+      }
+
+      .product-card:hover .product-link::after {
+        transform: translateX(4px);
+      }
+
+      /* footer */
+      footer {
+        padding: 60px 20px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .footer-brand {
+        font-weight: 600;
+        font-size: 1.2rem;
+        letter-spacing: -0.02em;
+      }
+
+      .footer-contact {
+        display: flex;
+        gap: 30px;
+        color: var(--text-muted);
+        font-size: 0.95rem;
+      }
+
+      .footer-contact a {
+        color: var(--text-muted);
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+
+      .footer-contact a:hover {
+        color: var(--text-main);
+      }
+
+      .footer-copyright {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <nav>
+      <div class="logo">
+        <a href="/saas">cras software</a> <span style="color: var(--accent)">/</span>
+      </div>
+      <div class="search"></div>
+      <div class="nav-controls">
+        <div class="lang-toggle" id="lang-toggle" data-active="es">
+          <div class="slider"></div>
+          <button class="lang-btn" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="es">ES</button>
+        </div>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <h1 id="hero-title" data-i18n="hero-title">
+        <span class="scramble-target" data-orig="cras">cras</span> software
+      </h1>
+      <div id="dict-footnote" class="dict-definition"></div>
+      <p data-i18n="hero-desc">
+        herramientas saas altamente optimizadas, componentes de infraestructura
+        y utilidades de automatización b2b.
+      </p>
+    </section>
+
+    <section class="catalog-section">
+      <div class="catalog-grid">
+        <a href="/saas/tvbox-apk-installer" class="product-card">
+          <div class="product-header">
+            <div class="product-title">tvbox apk installer</div>
+            <div class="product-status" data-i18n="status-live">activo</div>
+          </div>
+          <p class="product-desc" data-i18n="prod-1-desc">
+            aprovisionamiento zero-touch para dispositivos android tv. despliega
+            apks concurrentemente a través de tu red local utilizando
+            descubrimiento mdns y servicios adb integrados.
+          </p>
+          <div class="tag-container">
+            <span class="tag-pill">b2b</span>
+            <span class="tag-pill">tvbox</span>
+            <span class="tag-pill">android</span>
+            <span class="tag-pill">wireless</span>
+            <span class="tag-pill">c++</span>
+          </div>
+          <div class="product-link" data-i18n="btn-view">ver detalles</div>
+        </a>
+
+        <div class="product-card" style="opacity: 0.5; pointer-events: none">
+          <div class="product-header">
+            <div class="product-title">tvbox os agilizer</div>
+            <div
+              class="product-status"
+              style="background-color: var(--border); color: var(--text-muted)"
+              data-i18n="status-dev"
+            >
+              en desarrollo
+            </div>
+          </div>
+          <p class="product-desc" data-i18n="prod-2-desc">
+            software de prueba para agilizar configuracion a nivel de sistema
+            operativo en los tvbox android, bajando el tiempo de configuracion
+            de un tvbox de 50 minutos a 3 minutos
+          </p>
+          <div class="tag-container">
+            <span class="tag-pill">b2b</span>
+            <span class="tag-pill">android</span>
+            <span class="tag-pill">c++</span>
+            <span class="tag-pill">os</span>
+            <span class="tag-pill">hacking</span>
+          </div>
+          <div
+            class="product-link"
+            style="color: var(--text-muted)"
+            data-i18n="btn-locked"
+          >
+            acceso restringido
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="footer-brand">
+        cras software <span style="color: var(--accent)">/</span>
+      </div>
+      <div class="footer-contact">
+        <a href="mailto:hello@devchrisacosta.net"> hello@devchrisacosta.net </a>
+        <p>●</p>
+        <a href="https://wa.me/51917862194" target="_blank">+51 917 862 194</a>
+      </div>
+      <div class="footer-copyright" data-i18n="footer-text">
+        christopher acosta © 2026. diseñado para la optimización.
+      </div>
+    </footer>
+
+    <script>
+      const i18n = {
+        en: {
+          "hero-title":
+            '<span class="scramble-target" data-orig="cras">cras</span> software',
+          "hero-desc":
+            "highly optimized saas tools, infrastructure components, and b2b automation utilities.",
+          "status-live": "live",
+          "status-dev": "indev",
+          "prod-1-desc":
+            "zero-touch provisioning for android tv devices. deploy apks concurrently across your local subnet using mdns discovery and embedded adb daemons",
+          "prod-2-desc":
+            "software de prueba para agilizar configuracion a nivel de sistema operativo en los tvbox android, bajando el tiempo de configuracion de un tvbox de 50 minutos a 3 minutos",
+          "btn-view": "view details",
+          "btn-locked": "restricted access",
+          "footer-text":
+            "christopher acosta © 2026. engineered for optimization.",
+          "dict-word": "tomorrow's",
+          "dict-def": "* cras: adv. (latin) tomorrow / the future",
+        },
+        es: {
+          "hero-title":
+            '<span class="scramble-target" data-orig="cras">cras</span> software',
+          "hero-desc":
+            "herramientas saas altamente optimizadas, componentes de infraestructura y utilidades de automatización b2b.",
+          "status-live": "activo",
+          "status-dev": "en desarrollo",
+          "prod-1-desc":
+            "aprovisionamiento zero-touch para dispositivos android tv. despliega apks concurrentemente a través de tu red local utilizando descubrimiento mdns y servicios adb integrados",
+          "prod-2-desc":
+            "software de prueba para agilizar configuracion a nivel de sistema operativo en los tvbox android, bajando el tiempo de configuracion de un tvbox de 50 minutos a 3 minutos",
+          "btn-view": "ver detalles",
+          "btn-locked": "acceso restringido",
+          "footer-text":
+            "christopher acosta © 2026. diseñado para la optimización.",
+          "dict-word": "del mañana", // Adjusted dict word to exactly match the target output
+          "dict-def": "* cras: adv. (latín) mañana / el futuro",
+        },
+      };
+
+      function setCookie(name, value, days) {
+        let expires = "";
+        if (days) {
+          const date = new Date();
+          date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+          expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie =
+          name + "=" + (value || "") + expires + "; path=/; SameSite=Lax";
+      }
+
+      function getCookie(name) {
+        const nameEQ = name + "=";
+        const ca = document.cookie.split(";");
+        for (let i = 0; i < ca.length; i++) {
+          let c = ca[i];
+          while (c.charAt(0) === " ") c = c.substring(1, c.length);
+          if (c.indexOf(nameEQ) === 0)
+            return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+      }
+
+      function applyLanguage(lang) {
+        if (!i18n[lang]) lang = "es";
+
+        document.documentElement.lang = lang;
+        document
+          .getElementById("lang-toggle")
+          .setAttribute("data-active", lang);
+
+        const nodes = document.querySelectorAll("[data-i18n]");
+        nodes.forEach((node) => {
+          const key = node.getAttribute("data-i18n");
+          if (i18n[lang][key]) {
+            if (key === "hero-title") {
+              node.innerHTML = i18n[lang][key];
+            } else {
+              node.innerText = i18n[lang][key];
+            }
+          }
+        });
+
+        const footnote = document.getElementById("dict-footnote");
+        if (footnote && i18n[lang]["dict-def"]) {
+          footnote.innerText = i18n[lang]["dict-def"];
+        }
+
+        setCookie("pref_lang", lang, 365);
+      }
+
+      let scrambleInterval = null;
+      const glitchChars = "0123456789abcdefghijklmnopqrstuvwxyz!@#$%^&*";
+
+      // Reconstructed logic branching strictly on language
+      function runScramble(lang, isEntering = true) {
+        const h1 = document.getElementById("hero-title");
+        if (!h1) return;
+
+        clearInterval(scrambleInterval);
+        let iterations = 0;
+
+        if (lang === "en") {
+          // ENGLISH: Original logic restricted to the span.
+          let span = h1.querySelector(".scramble-target");
+          if (!span) {
+            h1.innerHTML = i18n["en"]["hero-title"];
+            span = h1.querySelector(".scramble-target");
+          }
+
+          if (isEntering) span.style.color = "var(--accent)";
+
+          const targetText = isEntering ? i18n["en"]["dict-word"] : "cras";
+          const originalText = span.innerText;
+          const maxLen = Math.max(originalText.length, targetText.length);
+
+          scrambleInterval = setInterval(() => {
+            let result = "";
+            if (isEntering) {
+              for (let i = 0; i < maxLen; i++) {
+                if (i < iterations) {
+                  result += targetText[i] || "";
+                } else if (
+                  i < originalText.length ||
+                  i < Math.ceil(iterations) + 2
+                ) {
+                  result +=
+                    glitchChars[Math.floor(Math.random() * glitchChars.length)];
+                }
+              }
+            } else {
+              const visibleThreshold = maxLen - iterations;
+              for (let i = 0; i < maxLen; i++) {
+                if (i < visibleThreshold) {
+                  result += originalText[i] || "";
+                } else if (i < targetText.length) {
+                  if (i >= visibleThreshold - 1) {
+                    result += targetText[i] || "";
+                  } else {
+                    result +=
+                      glitchChars[
+                        Math.floor(Math.random() * glitchChars.length)
+                      ];
+                  }
+                }
+              }
+            }
+
+            span.innerText = result;
+
+            if (iterations >= maxLen) {
+              span.innerText = targetText;
+              if (!isEntering) span.style.color = "";
+              clearInterval(scrambleInterval);
+            }
+            iterations += 0.35;
+          }, 30);
+        } else {
+          // SPANISH: 1-for-2 Teleportation Logic
+          const targetES = i18n["es"]["dict-word"]; // "del mañana"
+          const maxLenES = 10;
+
+          scrambleInterval = setInterval(() => {
+            let leftStr = "";
+            let rightStr = "";
+
+            if (isEntering) {
+              let leftLen = Math.max(0, 4 - Math.floor(iterations / 2.5));
+              for (let k = 0; k < leftLen; k++)
+                leftStr +=
+                  glitchChars[Math.floor(Math.random() * glitchChars.length)];
+
+              let rightLen = Math.min(maxLenES, Math.floor(iterations));
+              let visibleRight = Math.max(0, rightLen - 2);
+              for (let k = 0; k < rightLen; k++) {
+                if (k < visibleRight) rightStr += targetES[k];
+                else
+                  rightStr +=
+                    glitchChars[Math.floor(Math.random() * glitchChars.length)];
+              }
+            } else {
+              let leftLen = Math.min(4, Math.floor(iterations / 2.5));
+              for (let k = 0; k < leftLen; k++)
+                leftStr +=
+                  glitchChars[Math.floor(Math.random() * glitchChars.length)];
+
+              let rightLen = Math.max(0, maxLenES - Math.floor(iterations));
+              let visibleRight = Math.max(0, rightLen - 2);
+              for (let k = 0; k < rightLen; k++) {
+                if (k < visibleRight) rightStr += targetES[k];
+                else
+                  rightStr +=
+                    glitchChars[Math.floor(Math.random() * glitchChars.length)];
+              }
+            }
+
+            let leftHTML = leftStr
+              ? `<span class="scramble-target" style="color: var(--accent)">${leftStr}</span>`
+              : "";
+            let rightHTML = rightStr
+              ? `<span class="scramble-target" style="color: var(--accent)">${rightStr}</span>`
+              : "";
+
+            // Seamlessly deletes the space when the left side drops to 0 characters
+            let middleStr = leftStr ? " software " : "software ";
+
+            h1.innerHTML = leftHTML + middleStr + rightHTML;
+
+            if (iterations >= maxLenES) {
+              clearInterval(scrambleInterval);
+              if (isEntering) {
+                h1.innerHTML = `software <span class="scramble-target" style="color: var(--accent)">${targetES}</span>`;
+              } else {
+                h1.innerHTML = `<span class="scramble-target">cras</span> software`;
+              }
+            }
+            iterations += 0.35;
+          }, 30);
+        }
+      }
+
+      function setupScrambleListeners() {
+        const h1 = document.getElementById("hero-title");
+        if (!h1) return;
+
+        // Binding to the parent H1 natively locks the hitbox over both left and right iterations
+        h1.onmouseenter = () => {
+          const activeLang = document.documentElement.lang || "es";
+          runScramble(activeLang, true);
+        };
+
+        h1.onmouseleave = () => {
+          const activeLang = document.documentElement.lang || "es";
+          runScramble(activeLang, false);
+        };
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const savedLang = getCookie("pref_lang") || "es";
+        applyLanguage(savedLang);
+
+        // Single global binding for the hitbox
+        setupScrambleListeners();
+
+        const toggleWrapper = document.getElementById("lang-toggle");
+        toggleWrapper.addEventListener("click", (e) => {
+          if (e.target.classList.contains("lang-btn")) {
+            applyLanguage(e.target.getAttribute("data-lang"));
+          } else {
+            const currentState = toggleWrapper.getAttribute("data-active");
+            applyLanguage(currentState === "en" ? "es" : "en");
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
