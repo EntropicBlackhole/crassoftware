@@ -1,0 +1,59 @@
+---
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+interface Breadcrumb {
+  label: string;
+  url: string;
+  isCurrent?: boolean;
+}
+
+interface Props {
+  title: string;
+  lang?: string;
+  breadcrumbs?: Breadcrumb[];
+  rootHref?: string;
+}
+
+const { title, lang = 'es', breadcrumbs = [], rootHref = '/saas' } = Astro.props;
+---
+<!doctype html>
+<html lang={lang} data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <Navbar breadcrumbs={breadcrumbs} rootHref={rootHref} />
+    <main id="main-content">
+      <slot />
+    </main>
+    <Footer />
+    <script>
+      document.addEventListener('mousemove', (e: MouseEvent) => {
+        const cards = document.querySelectorAll('.bento-card, .product-card');
+        
+        requestAnimationFrame(() => {
+          cards.forEach((card) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            (card as HTMLElement).style.setProperty('--mouse-x', `${x}px`);
+            (card as HTMLElement).style.setProperty('--mouse-y', `${y}px`);
+          });
+        });
+      });
+
+      document.addEventListener('astro:after-swap', () => {
+        const savedTheme = localStorage.getItem('pref_theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        
+        const savedLang = localStorage.getItem('pref_lang') || 'es';
+        document.documentElement.lang = savedLang;
+      });
+    </script>
+  </body>
+</html>

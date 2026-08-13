@@ -1,0 +1,62 @@
+---
+---
+<footer class="site-footer">
+  <div class="footer-brand">cras software <span class="text-accent">/</span></div>
+  <address class="footer-contact">
+    <a href="mailto:hello@devchrisacosta.net">hello@devchrisacosta.net</a>
+    <a href="https://wa.me/51917862194" target="_blank" rel="noopener noreferrer">+51 917 862 194</a>
+  </address>
+  <div class="footer-copyright" data-i18n="footer-text">
+    christopher acosta © 2026. diseñado para la optimización.
+  </div>
+</footer>
+<style>
+  .site-footer {
+    padding: 60px 20px;
+    border-top: 1px solid var(--border-dim);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    font-family: var(--font-mono);
+  }
+
+  .footer-brand {
+    font-weight: 600;
+    font-size: 1.2rem;
+    letter-spacing: -0.02em;
+    color: var(--text-main);
+  }
+
+  .text-accent {
+    color: var(--accent-base);
+  }
+
+  .footer-contact {
+    display: flex;
+    gap: 30px;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    font-style: normal;
+  }
+
+  .footer-contact a {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .footer-contact a:hover {
+    color: var(--text-main);
+  }
+
+  .footer-copyright {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-top: 20px;
+  }
+
+  @media (max-width: 768px) {
+    .footer-contact { flex-direction: column; gap: 10px; text-align: center; }
+  }
+</style>

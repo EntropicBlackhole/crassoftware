@@ -1,0 +1,13 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import DemoSandbox from '../../../components/DemoSandbox';
+
+const breadcrumbs = [
+  { label: 'tvbox apk installer', url: '/saas/tvbox-apk-installer', isCurrent: false },
+  { label: 'demo', url: '/saas/tvbox-apk-installer/demo', isCurrent: true }
+];
+---
+
+<BaseLayout title="cras software / demo" breadcrumbs={breadcrumbs} rootHref="/saas">
+  <DemoSandbox client:load />
+</BaseLayout>

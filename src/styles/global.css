@@ -1,0 +1,107 @@
+:root {
+  --font-sans: -apple-system, blinkmacsystemfont, "segoe ui", roboto, helvetica, arial, sans-serif;
+  --font-mono: "space mono", ui-monospace, sfmono-regular, menlo, monaco, consolas, monospace;
+
+  --bg-base: oklch(0.1448 0 0);
+  --bg-surface: oklch(0.1776 0 0);
+  --bg-surface-hover: oklch(0.2178 0 0);
+  --bg-nav: oklch(0 0 0);
+  
+  --text-main: oklch(95% 0 0);
+  --text-muted: oklch(65% 0 0);
+  
+  --accent-base: oklch(55% 0.22 260);
+  --accent-action: oklch(70% 0.18 50);
+  
+  --border-dim: oklch(30% 0 0);
+  --border-bright: oklch(45% 0 0);
+
+  --tv-bg: oklch(18% 0.01 260);
+  --tv-surface: oklch(24% 0.01 260);
+  --tv-highlight: oklch(92% 0 0);
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 1rem;
+  --space-4: 1.5rem;
+  --space-5: 2rem;
+  --space-6: 3rem;
+  --space-8: 4rem;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 12px;
+
+  --max-width: 1000px;
+}
+
+[data-theme="light"] {
+  --bg-base: oklch(98% 0 0);
+  --bg-surface: oklch(94% 0 0);
+  --bg-surface-hover: oklch(90% 0 0);
+  
+  --text-main: oklch(15% 0 0);
+  --text-muted: oklch(45% 0 0);
+  
+  --border-dim: oklch(85% 0 0);
+  --border-bright: oklch(70% 0 0);
+  
+  --tv-bg: oklch(90% 0.01 260);
+  --tv-surface: oklch(95% 0.01 260);
+  --tv-highlight: oklch(20% 0 0);
+}
+
+@property --fill-angle {
+  syntax: "<angle>";
+  initial-value: 360deg;
+  inherits: false;
+}
+
+@property --mouse-x {
+  syntax: "<length> | <percentage>";
+  initial-value: 50%;
+  inherits: true;
+}
+
+@property --mouse-y {
+  syntax: "<length> | <percentage>";
+  initial-value: 50%;
+  inherits: true;
+}
+
+@view-transition {
+  navigation: auto;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-base);
+  color: var(--text-main);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6, .mono {
+  font-family: var(--font-mono);
+}
+
+.content-vis {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
+}
+
+#main-content {
+  padding-top: 80px; 
+}

@@ -1,0 +1,250 @@
+---
+interface Breadcrumb {
+  label: string;
+  url: string;
+  isCurrent?: boolean;
+}
+
+interface Props {
+  breadcrumbs?: Breadcrumb[];
+  rootHref?: string;
+}
+
+const { breadcrumbs = [], rootHref = "/saas" } = Astro.props;
+---
+<header class="site-header">
+  <nav class="main-nav" aria-label="navegacion principal">
+    <div class="brand-breadcrumbs">
+      <a href={rootHref} class="nav-logo nav-link">cras software</a>
+      {breadcrumbs.map((crumb:Breadcrumb) => (
+        <span class="nav-separator" aria-hidden="true" style="user-select: none; ">/</span>
+        <a 
+          href={crumb.url} 
+          class="nav-link"
+          aria-current={crumb.isCurrent ? 'page' : undefined}
+        >
+          {crumb.label}
+        </a>
+      ))}
+      {
+        (breadcrumbs.length == 0 ? <span class="nav-separator" aria-hidden="true" style="user-select: none; ">/</span>
+: (""))
+      }
+    </div>
+
+    <div class="nav-controls">
+      <div class="theme-toggle" id="theme-toggle" data-active="dark" role="switch" aria-checked="true">
+        <div class="slider"></div>
+        <button class="theme-btn" data-theme="light" aria-label="cambiar a tema claro">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+        </button>
+        <button class="theme-btn" data-theme="dark" aria-label="cambiar a tema oscuro">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+      </div>
+      
+      <div class="lang-toggle" id="lang-toggle" data-active="es" role="switch">
+        <div class="slider"></div>
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="es">ES</button>
+      </div>
+    </div>
+  </nav>
+</header>
+<script>
+  import { i18nData, type LangKey, type I18nKey } from '../utils/i18n';
+
+  const themeToggle = document.getElementById('theme-toggle');
+  const langToggle = document.getElementById('lang-toggle');
+
+  function applyTheme(theme: string | null) {
+    if (theme !== 'light' && theme !== 'dark') return;
+    document.documentElement.setAttribute('data-theme', theme);
+    themeToggle?.setAttribute('data-active', theme);
+    localStorage.setItem('pref_theme', theme);
+  }
+
+  function applyLanguage(lang: string | null) {
+    if (lang !== 'en' && lang !== 'es') return;
+    document.documentElement.lang = lang;
+    langToggle?.setAttribute('data-active', lang);
+    localStorage.setItem('pref_lang', lang);
+
+    const nodes = document.querySelectorAll('[data-i18n]');
+    nodes.forEach((node) => {
+      const key = node.getAttribute('data-i18n') as I18nKey;
+      if (key && i18nData[lang as LangKey]?.[key]) {
+        node.innerHTML = i18nData[lang as LangKey][key];
+      }
+    });
+
+    window.dispatchEvent(new CustomEvent('languagechange', { detail: lang }));
+  }
+
+  const initialTheme = localStorage.getItem('pref_theme') || 'dark';
+  const initialLang = localStorage.getItem('pref_lang') || 'es';
+  
+  themeToggle?.setAttribute('data-active', initialTheme);
+  langToggle?.setAttribute('data-active', initialLang);
+  
+  applyLanguage(initialLang);
+
+  themeToggle?.addEventListener('click', (e: Event) => {
+    const target = e.target as HTMLElement;
+    if (!target) return;
+    
+    const btn = target.closest('.theme-btn') as HTMLElement;
+    if (btn) {
+      applyTheme(btn.getAttribute('data-theme'));
+    } else {
+      const current = themeToggle?.getAttribute('data-active');
+      applyTheme(current === 'dark' ? 'light' : 'dark');
+    }
+  });
+
+  langToggle?.addEventListener('click', (e: Event) => {
+    const target = e.target as HTMLElement;
+    if (!target) return;
+
+    const btn = target.closest('.lang-btn') as HTMLElement;
+    if (btn) {
+      applyLanguage(btn.getAttribute('data-lang'));
+    } else {
+      const current = langToggle?.getAttribute('data-active');
+      applyLanguage(current === 'en' ? 'es' : 'en');
+    }
+  });
+</script>
+<style>
+  .site-header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 999;
+  }
+  
+  .main-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    font-family: var(--font-mono);
+    padding: 20px 40px;
+    backdrop-filter: blur(4px);
+    border-bottom: 1px solid var(--border-dim);
+    background: oklch(from var(--bg-nav) l c h / 80%);
+    z-index: 999;
+
+  }
+
+  .brand-breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .nav-logo {
+    color: var(--text-main);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .nav-separator {
+    color: var(--accent-base);
+  }
+
+  .nav-link {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s ease;
+  }
+
+  .nav-link:hover {
+    color: var(--text-main);
+  }
+
+  .nav-controls {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .theme-toggle, .lang-toggle {
+    position: relative;
+    display: flex;
+    background-color: var(--bg-base);
+    border: 1px solid var(--border-dim);
+    border-radius: var(--radius-md);
+    padding: 3px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .slider {
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    left: 3px;
+    width: calc(50% - 3px);
+    background-color: var(--bg-surface-hover);
+    border-radius: var(--radius-sm);
+    transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+    border: 1px solid var(--border-dim);
+  }
+
+  .lang-toggle[data-active="es"] .slider,
+  .theme-toggle[data-active="dark"] .slider {
+    transform: translateX(100%);
+  }
+
+  .theme-btn, .lang-btn {
+    position: relative;
+    z-index: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    padding: 4px 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: color 0.25s ease, filter 0.25s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .theme-btn {
+    filter: grayscale(100%) opacity(0.5);
+  }
+
+  :global(.theme-toggle[data-active="light"] .theme-btn[data-theme="light"]),
+  :global(.theme-toggle[data-active="dark"] .theme-btn[data-theme="dark"]) {
+    filter: grayscale(0%) opacity(1);
+    color: var(--text-main);
+  }
+
+  :global(.lang-toggle[data-active="en"] .lang-btn[data-lang="en"]),
+  :global(.lang-toggle[data-active="es"] .lang-btn[data-lang="es"]) {
+    color: var(--text-main);
+  }
+
+  @media (max-width: 768px) {
+    .main-nav { padding: 20px; }
+  }
+</style>

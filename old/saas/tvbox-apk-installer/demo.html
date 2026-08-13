@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>cras software / demo</title>
     <style>
+
+@view-transition {
+        navigation: auto;
+      }
       html {
         overflow-y: scroll;
       }
@@ -628,7 +632,6 @@
         },
       };
 
-      // Cookie Management
       function setCookie(name, value, days) {
         let expires = "";
         if (days) {
@@ -676,7 +679,6 @@
           }
         });
 
-        // Re-render FSM text dynamically
         document.getElementById("term-init").innerHTML =
           i18n[lang]["term-init"];
         document.getElementById("btn-deploy-text").innerHTML =
@@ -686,7 +688,6 @@
         setCookie("pref_lang", lang, 365);
       }
 
-      // FSM Logic
       let currentState = 0;
       let randomCode = Math.round(Math.random() * (999999 - 100000) + 100000);
 
@@ -699,7 +700,6 @@
       const apkQueue = document.getElementById("apk-queue");
 
       function initSim() {
-        // Populate PC APK Queue
         apkQueue.innerHTML = payloadAPKs
           .map((apk) => `<div>📄 ${apk}</div>`)
           .join("");
@@ -746,7 +746,6 @@
                 </div>
               </div>
             `;
-            //
             document
               .getElementById("tv-settings-btn")
               .addEventListener("click", advanceState);
@@ -791,7 +790,6 @@ fill="#ffffff" viewBox="0 0 24 24" >
                </div>
             `;
 
-            // Wake up PC if not already woken
             if (pcApp.classList.contains("state-dimmed")) {
               pcApp.classList.remove("state-dimmed");
               terminalLog.innerHTML += t("term-found");
@@ -811,7 +809,6 @@ fill="#ffffff" viewBox="0 0 24 24" >
             pinInput.classList.remove("clickable");
             pinInput.disabled = true;
 
-            // Prevent multiple auth injections on re-render
             if (!terminalLog.innerHTML.includes("RSA")) {
               terminalLog.innerHTML += t("term-auth");
               terminalLog.scrollTop = terminalLog.scrollHeight;
@@ -822,7 +819,6 @@ fill="#ffffff" viewBox="0 0 24 24" >
             btnDeploy.style.color = "var(--bg-base)";
             btnDeploy.classList.add("clickable");
 
-            // clear old listeners to prevent double execution on language switch
             const newBtn = btnDeploy.cloneNode(true);
             btnDeploy.parentNode.replaceChild(newBtn, btnDeploy);
             newBtn.addEventListener("click", advanceState);
@@ -835,7 +831,6 @@ fill="#ffffff" viewBox="0 0 24 24" >
             activeBtn.innerHTML = t("btn-installing");
             activeBtn.disabled = true;
 
-            // Flash back to TV Home Screen with base SVGs
             tvScreen.innerHTML = `
               <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #333; padding-bottom: 10px;">
                 <div style="font-weight: bold; font-size: 1.2rem;">Android TV</div>
@@ -896,13 +891,11 @@ fill="#ffffff" viewBox="0 0 24 24" >
               terminalLog.innerHTML += `<br>[*] ${t("term-inject")} ${currentApk}... <span style='color: #00ff00;'>[OK]</span>`;
               terminalLog.scrollTop = terminalLog.scrollHeight;
 
-              // Fetch the mapped SVG or fall back to the text generator
               const iconContent = apkLogos[currentApk]
                 ? apkLogos[currentApk]
                 : apkLogos["default"](currentApk);
               console.log(currentApk, apkLogos[currentApk]);
 
-              // ARCHITECTURAL FIX: Use insertAdjacentHTML so we do not re-trigger existing animations
               tvGrid.insertAdjacentHTML(
                 "beforeend",
                 `<div class="tv-app installed">${iconContent}</div>`,
@@ -916,7 +909,7 @@ fill="#ffffff" viewBox="0 0 24 24" >
       }
 
       document.addEventListener("DOMContentLoaded", () => {
-        initSim(); // Initialize data and state 0
+        initSim();
 
         const savedLang = getCookie("pref_lang") || "es";
         applyLanguage(savedLang);

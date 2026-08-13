@@ -1,0 +1,416 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="cras software / catálogo">
+  <section class="catalog-hero" aria-labelledby="hero-title">
+    <h1 id="hero-title" data-i18n="hero-title">
+      <span class="scramble-target" data-orig="cras">cras</span> software
+    </h1>
+    <div id="dict-footnote" class="dict-definition" aria-live="polite"></div>
+    <p data-i18n="hero-desc">
+      herramientas saas altamente optimizadas, componentes de infraestructura y utilidades de automatización b2b.
+    </p>
+  </section>
+
+  <section class="catalog-section" aria-label="catálogo de productos">
+    <div class="catalog-grid">
+      <a href="/saas/tvbox-apk-installer" class="product-card">
+        <header class="product-header">
+          <h2 class="product-title">tvbox apk installer</h2>
+          <div class="product-status status-live" data-i18n="status-live">activo</div>
+        </header>
+        <p class="product-desc" data-i18n="prod-1-desc">
+          aprovisionamiento zero-touch para dispositivos android tv. despliega apks concurrentemente a través de tu red local utilizando descubrimiento mdns y servicios adb integrados.
+        </p>
+        <div class="tag-container" role="list">
+          <span class="tag-pill" role="listitem" data-tag="b2b">b2b</span>
+          <span class="tag-pill" role="listitem" data-tag="tvbox">tvbox</span>
+          <span class="tag-pill" role="listitem" data-tag="android">android</span>
+          <span class="tag-pill" role="listitem" data-tag="wireless">wireless</span>
+          <span class="tag-pill" role="listitem" data-tag="c++">c++</span>
+        </div>
+        <div class="product-link" data-i18n="btn-view">ver detalles</div>
+      </a>
+
+      <div class="product-card disabled-card" aria-disabled="true">
+        <header class="product-header">
+          <h2 class="product-title">tvbox os agilizer</h2>
+          <div class="product-status status-dev" data-i18n="status-dev">
+            en desarrollo
+          </div>
+        </header>
+        <p class="product-desc" data-i18n="prod-2-desc">
+          software de prueba para agilizar configuracion a nivel de sistema operativo en los tvbox android, bajando el tiempo de configuracion de un tvbox de 50 minutos a 3 minutos
+        </p>
+        <div class="tag-container" role="list">
+          <span class="tag-pill" role="listitem">b2b</span>
+          <span class="tag-pill" role="listitem">android</span>
+          <span class="tag-pill" role="listitem">c++</span>
+          <span class="tag-pill" role="listitem">os</span>
+          <span class="tag-pill" role="listitem">hacking</span>
+        </div>
+        <div class="product-link link-locked" data-i18n="btn-locked">
+          acceso restringido
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .catalog-hero {
+    max-width: 900px;
+    margin: 50px auto 60px;
+    padding: 0 20px;
+    text-align: left;
+  }
+ 
+  .catalog-hero h1 {
+    font-size: clamp(2.5rem, 6vw, 3.5rem);
+    font-family: var(--font-mono);
+    letter-spacing: -0.05em;
+    line-height: 1.1;
+    text-transform: lowercase;
+    cursor: help;
+    max-width: fit-content;
+  }
+
+  .scramble-target {
+    display: inline-block;
+  }
+
+  .dict-definition {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 10px;
+    margin-bottom: 25px;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    text-transform: lowercase;
+  }
+
+  .catalog-hero h1:hover + .dict-definition {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .catalog-hero p {
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    max-width: 600px;
+  }
+
+  .catalog-section {
+    max-width: 1000px;
+    margin: 0 auto 100px;
+    padding: 0 20px;
+  }
+
+  .catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+  }
+
+  .product-card {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-dim);
+    border-radius: 12px;
+    padding: 30px;
+    transition: border-color 0.2s, transform 0.2s;
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  .product-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: radial-gradient(
+      400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      oklch(from var(--accent-base) l c h / 40%),
+      transparent 40%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .product-card:hover:not(.disabled-card) {
+    border-color: var(--text-muted);
+    transform: translateY(-2px);
+  }
+
+  .product-card:hover:not(.disabled-card)::before {
+    opacity: 1;
+  }
+
+  .disabled-card {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: blur(4px);
+    transition: ease 0.25s filter;
+  }
+
+  .disabled-card:hover {
+    filter: blur(0px);
+  }
+
+  .product-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+  }
+
+  .product-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .product-status {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .status-live {
+    color: var(--bg-base);
+    background-color: var(--text-main);
+  }
+
+  .status-dev {
+    background-color: var(--border-dim);
+    color: var(--text-muted);
+  }
+
+  .product-desc {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-bottom: 24px;
+    flex-grow: 1;
+  }
+
+  .tag-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+
+  .tag-pill[data-tag="c++"] {
+    background: oklch(0.6721 0.101 250.8);
+    color: white;
+  }
+
+  .tag-pill[data-tag="android"] {
+    background: #3DDC84;
+    color: black;
+  }
+  .tag-pill[data-tag="b2b"] {
+    background: oklch(0.5838 0.2146 250.8);
+    color: white;
+  }
+
+  .tag-pill {
+    background-color: oklch(from var(--text-main) l c h / 5%);
+    border: 1px solid var(--border-dim);
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+    transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+  }
+
+  .tag-pill:hover {
+    color: var(--accent-base);
+    background-color: oklch(from var(--text-main) l c h / 5%);
+  }
+
+  .product-card:hover:not(.disabled-card) {
+    border-color: var(--accent-base);
+    color: var(--accent-base);
+  }
+
+  .product-link {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--accent-base);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .product-link::after {
+    content: ">";
+    transition: transform 0.2s;
+  }
+
+  .product-card:hover:not(.disabled-card) .product-link::after {
+    transform: translateX(4px);
+  }
+
+  .link-locked {
+    color: var(--text-muted);
+  }
+
+  .link-locked::after {
+    display: none;
+  }
+</style>
+
+<script>
+  import { i18nData, type LangKey } from '../../utils/i18n';
+
+  let scrambleInterval: ReturnType<typeof setInterval> | null = null;
+  const glitchChars = "0123456789abcdefghijklmnopqrstuvwxyz!@#$%^&*";
+
+  function runScramble(lang: LangKey, isEntering: boolean = true) {
+    const h1 = document.getElementById("hero-title");
+    const footnote = document.getElementById("dict-footnote");
+    if (!h1 || !footnote) return;
+
+    if (isEntering) {
+      footnote.innerText = i18nData[lang]["dict-def"] || "";
+    } else {
+      setTimeout(() => {
+        if (!h1.matches(':hover')) footnote.innerText = "";
+      }, 300);
+    }
+
+    if (scrambleInterval) clearInterval(scrambleInterval);
+    let iterations = 0;
+
+    if (lang === "en") {
+      let span = h1.querySelector(".scramble-target") as HTMLElement;
+      if (!span) {
+        h1.innerHTML = i18nData["en"]["catalog-title"];
+        span = h1.querySelector(".scramble-target") as HTMLElement;
+      }
+
+      if (isEntering) span.style.color = "var(--accent-base)";
+
+      const targetText = isEntering ? i18nData["en"]["dict-word"] : "cras";
+      const originalText = span.innerText;
+      const maxLen = Math.max(originalText.length, targetText.length);
+
+      scrambleInterval = setInterval(() => {
+        let result = "";
+        if (isEntering) {
+          for (let i = 0; i < maxLen; i++) {
+            if (i < iterations) {
+              result += targetText[i] || "";
+            } else if (i < originalText.length || i < Math.ceil(iterations) + 2) {
+              result += glitchChars[Math.floor(Math.random() * glitchChars.length)];
+            }
+          }
+        } else {
+          const visibleThreshold = maxLen - iterations;
+          for (let i = 0; i < maxLen; i++) {
+            if (i < visibleThreshold) {
+              result += originalText[i] || "";
+            } else if (i < targetText.length) {
+              if (i >= visibleThreshold - 1) {
+                result += targetText[i] || "";
+              } else {
+                result += glitchChars[Math.floor(Math.random() * glitchChars.length)];
+              }
+            }
+          }
+        }
+
+        span.innerText = result;
+
+        if (iterations >= maxLen) {
+          span.innerText = targetText;
+          if (!isEntering) span.style.color = "";
+          if (scrambleInterval) clearInterval(scrambleInterval);
+        }
+        iterations += 0.35;
+      }, 30);
+    } else {
+      const targetES = i18nData["es"]["dict-word"];
+      const maxLenES = 10;
+
+      scrambleInterval = setInterval(() => {
+        let leftStr = "";
+        let rightStr = "";
+
+        if (isEntering) {
+          let leftLen = Math.max(0, 4 - Math.floor(iterations / 2.5));
+          for (let k = 0; k < leftLen; k++) leftStr += glitchChars[Math.floor(Math.random() * glitchChars.length)];
+
+          let rightLen = Math.min(maxLenES, Math.floor(iterations));
+          let visibleRight = Math.max(0, rightLen - 2);
+          for (let k = 0; k < rightLen; k++) {
+            if (k < visibleRight) rightStr += targetES[k];
+            else rightStr += glitchChars[Math.floor(Math.random() * glitchChars.length)];
+          }
+        } else {
+          let leftLen = Math.min(4, Math.floor(iterations / 2.5));
+          for (let k = 0; k < leftLen; k++) leftStr += glitchChars[Math.floor(Math.random() * glitchChars.length)];
+
+          let rightLen = Math.max(0, maxLenES - Math.floor(iterations));
+          let visibleRight = Math.max(0, rightLen - 2);
+          for (let k = 0; k < rightLen; k++) {
+            if (k < visibleRight) rightStr += targetES[k];
+            else rightStr += glitchChars[Math.floor(Math.random() * glitchChars.length)];
+          }
+        }
+
+        let leftHTML = leftStr ? `<span class="scramble-target" style="color: var(--accent-base)">${leftStr}</span>` : "";
+        let rightHTML = rightStr ? `<span class="scramble-target" style="color: var(--accent-base)">${rightStr}</span>` : "";
+        let middleStr = leftStr ? " software " : "software ";
+
+        h1.innerHTML = leftHTML + middleStr + rightHTML;
+
+        if (iterations >= maxLenES) {
+          if (scrambleInterval) clearInterval(scrambleInterval);
+          if (isEntering) {
+            h1.innerHTML = `software <span class="scramble-target" style="color: var(--accent-base)">${targetES}</span>`;
+          } else {
+            h1.innerHTML = `<span class="scramble-target">cras</span> software`;
+          }
+        }
+        iterations += 0.35;
+      }, 30);
+    }
+  }
+
+  function setupScrambleListeners() {
+    const h1 = document.getElementById("hero-title");
+    if (!h1) return;
+
+    h1.onmouseenter = () => {
+      const activeLang = (document.documentElement.lang as LangKey) || "es";
+      runScramble(activeLang, true);
+    };
+
+    h1.onmouseleave = () => {
+      const activeLang = (document.documentElement.lang as LangKey) || "es";
+      runScramble(activeLang, false);
+    };
+  }
+
+  document.addEventListener("DOMContentLoaded", setupScrambleListeners);
+  document.addEventListener("astro:page-load", setupScrambleListeners);
+</script>

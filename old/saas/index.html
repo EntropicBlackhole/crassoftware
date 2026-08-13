@@ -5,15 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>cras software / catálogo</title>
     <style>
+      @view-transition {
+        navigation: auto;
+      }
+
       :root {
-  --bg-base: #ffffff;
-  --bg-surface: #f4f4f4;
-  --bg-surface-hover: #eaeaea;
-  --text-main: #111111;
-  --text-muted: #666666;
-  --accent: #0070f3;
-  --border: #d1d1d1;
-}
+        --bg-base: #0a0a0a;
+        --bg-surface: #111111;
+        --bg-surface-hover: #1a1a1a;
+        --text-main: #ededed;
+        --text-muted: #888888;
+        --accent: #0070f3;
+        --border: #333333;
+      }
+
+      [data-theme="light"] {
+        --bg-base: #ffffff;
+        --bg-surface: #f4f4f4;
+        --bg-surface-hover: #eaeaea;
+        --text-main: #111111;
+        --text-muted: #666666;
+        --accent: #0070f3;
+        --border: #d1d1d1;
+      }
 
       * {
         margin: 0;
@@ -313,7 +327,8 @@
   <body>
     <nav>
       <div class="logo">
-        <a href="/saas">cras software</a> <span style="color: var(--accent)">/</span>
+        <a href="/saas">cras software</a>
+        <span style="color: var(--accent)">/</span>
       </div>
       <div class="search"></div>
       <div class="nav-controls">
@@ -441,7 +456,7 @@
           "btn-locked": "acceso restringido",
           "footer-text":
             "christopher acosta © 2026. diseñado para la optimización.",
-          "dict-word": "del mañana", // Adjusted dict word to exactly match the target output
+          "dict-word": "del mañana",
           "dict-def": "* cras: adv. (latín) mañana / el futuro",
         },
       };
@@ -500,7 +515,6 @@
       let scrambleInterval = null;
       const glitchChars = "0123456789abcdefghijklmnopqrstuvwxyz!@#$%^&*";
 
-      // Reconstructed logic branching strictly on language
       function runScramble(lang, isEntering = true) {
         const h1 = document.getElementById("hero-title");
         if (!h1) return;
@@ -509,7 +523,6 @@
         let iterations = 0;
 
         if (lang === "en") {
-          // ENGLISH: Original logic restricted to the span.
           let span = h1.querySelector(".scramble-target");
           if (!span) {
             h1.innerHTML = i18n["en"]["hero-title"];
@@ -564,8 +577,7 @@
             iterations += 0.35;
           }, 30);
         } else {
-          // SPANISH: 1-for-2 Teleportation Logic
-          const targetES = i18n["es"]["dict-word"]; // "del mañana"
+          const targetES = i18n["es"]["dict-word"];
           const maxLenES = 10;
 
           scrambleInterval = setInterval(() => {
@@ -609,7 +621,6 @@
               ? `<span class="scramble-target" style="color: var(--accent)">${rightStr}</span>`
               : "";
 
-            // Seamlessly deletes the space when the left side drops to 0 characters
             let middleStr = leftStr ? " software " : "software ";
 
             h1.innerHTML = leftHTML + middleStr + rightHTML;
@@ -631,7 +642,6 @@
         const h1 = document.getElementById("hero-title");
         if (!h1) return;
 
-        // Binding to the parent H1 natively locks the hitbox over both left and right iterations
         h1.onmouseenter = () => {
           const activeLang = document.documentElement.lang || "es";
           runScramble(activeLang, true);
@@ -647,7 +657,6 @@
         const savedLang = getCookie("pref_lang") || "es";
         applyLanguage(savedLang);
 
-        // Single global binding for the hitbox
         setupScrambleListeners();
 
         const toggleWrapper = document.getElementById("lang-toggle");

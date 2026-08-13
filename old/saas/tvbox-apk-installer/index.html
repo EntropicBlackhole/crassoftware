@@ -5,15 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>cras software / tvbox apk installer</title>
     <style>
+      @view-transition {
+        navigation: auto;
+      }
       :root {
-  --bg-base: #ffffff;
-  --bg-surface: #f4f4f4;
-  --bg-surface-hover: #eaeaea;
-  --text-main: #111111;
-  --text-muted: #666666;
-  --accent: #0070f3;
-  --border: #d1d1d1;
-}
+        --bg-base: #0a0a0a;
+        --bg-surface: #111111;
+        --bg-surface-hover: #1a1a1a;
+        --text-main: #ededed;
+        --text-muted: #888888;
+        --accent: #0070f3;
+        --border: #333333;
+      }
+
+      [data-theme="light"] {
+        --bg-base: #ffffff;
+        --bg-surface: #f4f4f4;
+        --bg-surface-hover: #eaeaea;
+        --text-main: #111111;
+        --text-muted: #666666;
+        --accent: #0070f3;
+        --border: #d1d1d1;
+      }
 
       * {
         margin: 0;
@@ -105,6 +118,45 @@
       .lang-toggle[data-active="en"] .lang-btn[data-lang="en"],
       .lang-toggle[data-active="es"] .lang-btn[data-lang="es"] {
         color: var(--text-main);
+      }
+
+      /* Theme Toggle Base */
+      .theme-toggle {
+        position: relative;
+        display: flex;
+        background-color: var(--bg-base);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 3px;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      /* Slide Logic: Assuming Light is left (0%), Dark is right (100%) */
+      .theme-toggle[data-active="dark"] .slider {
+        transform: translateX(100%);
+      }
+
+      /* Button Styling */
+      .theme-btn {
+        position: relative;
+        z-index: 1;
+        background: transparent;
+        border: none;
+        /* Grayscale filter for inactive states if using emojis */
+        filter: grayscale(100%) opacity(0.5);
+        padding: 4px 12px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition:
+          filter 0.25s,
+          opacity 0.25s;
+      }
+
+      /* Active State Highlighting */
+      .theme-toggle[data-active="light"] .theme-btn[data-theme="light"],
+      .theme-toggle[data-active="dark"] .theme-btn[data-theme="dark"] {
+        filter: grayscale(0%) opacity(1);
       }
 
       /* hero section */
@@ -489,6 +541,11 @@
       </div>
 
       <div class="nav-controls">
+        <div class="theme-toggle" id="theme-toggle" data-active="dark">
+          <div class="slider"></div>
+          <button class="theme-btn" data-theme="light">☀️</button>
+          <button class="theme-btn" data-theme="dark">🌙</button>
+        </div>
         <div class="lang-toggle" id="lang-toggle" data-active="es">
           <div class="slider"></div>
           <button class="lang-btn" data-lang="en">EN</button>
@@ -588,8 +645,12 @@
           </div>
           <ul class="pricing-features">
             <li data-i18n="feat-2.1">licencias vitalicias para 2 pcs</li>
-            <li data-i18n="feat-2.2">ideal para tiendas fisicas con dos tecnicos</li>
-            <li data-i18n="feat-2.3">ahorras S/25 en tu segunda estacion de trabajo</li>
+            <li data-i18n="feat-2.2">
+              ideal para tiendas fisicas con dos tecnicos
+            </li>
+            <li data-i18n="feat-2.3">
+              ahorras S/25 en tu segunda estacion de trabajo
+            </li>
           </ul>
         </div>
       </div>
@@ -695,8 +756,7 @@
             </tr>
             <tr>
               <td data-i18n="table-generic">tv boxes genéricos (android tv)</td>
-              <td data-i18n="">
-              </td>
+              <td data-i18n=""></td>
               <td>
                 <span
                   class="status-badge unconfirmed"
@@ -707,8 +767,7 @@
             </tr>
             <tr>
               <td>google chromecast (w/ google tv)</td>
-              <td data-i18n="">
-              </td>
+              <td data-i18n=""></td>
               <td>
                 <span
                   class="status-badge unconfirmed"
@@ -746,10 +805,12 @@
           "hero-tag": "v2.0.5 - stable | 4.98 mb",
           "demo-tag": "> see demo",
           "video-tag": "> see video",
-          "dict-def": '<span style="color: var(--accent);">video</span> not available yet',
-          "bento-1-title": 'be <span style="color: var(--accent);">95% faster</span>',
+          "dict-def":
+            '<span style="color: var(--accent);">video</span> not available yet',
+          "bento-1-title":
+            'be <span style="color: var(--accent);">95% faster</span>',
           "bento-1-desc":
-          "from 5 minutes to 15 seconds per apk. install a batch of 10 apks in 2-3 minutes instead of losing an entire hour. scale your daily production and maximize your time without a sweat",
+            "from 5 minutes to 15 seconds per apk. install a batch of 10 apks in 2-3 minutes instead of losing an entire hour. scale your daily production and maximize your time without a sweat",
           "bento-2-title":
             'the apks are <span style="color: var(--accent);">yours forever</span>',
           "bento-2-desc":
@@ -791,7 +852,8 @@
           "hero-tag": "v2.0.5 - estable | 4.98 mb",
           "demo-tag": "> ver demo",
           "video-tag": "> ver video",
-          "dict-def": '<span style="color: var(--accent);">video</span> no esta disponible aun',
+          "dict-def":
+            '<span style="color: var(--accent);">video</span> no esta disponible aun',
 
           "bento-1-title":
             'trabaja con <span style="color: var(--accent);">95% más productividad</span>',
@@ -876,14 +938,6 @@
         );
         whatsappLinks.forEach((link) => {
           if (link.classList.contains("pricing-cta")) {
-            const tier =
-              link.getAttribute("data-i18n") === "pricing-btn-1"
-                ? lang === "en"
-                  ? "MONTHLY"
-                  : "MENSUAL"
-                : lang === "en"
-                  ? "LIFETIME"
-                  : "DE POR VIDA";
             const msg =
               lang === "en"
                 ? "Hi cras software, I want to purchase the license for TVBox APK Installer"
@@ -900,17 +954,42 @@
         setCookie("pref_lang", lang, 365);
       }
 
+      function applyTheme(theme) {
+        if (theme !== "light" && theme !== "dark") theme = "dark";
+
+        document.documentElement.setAttribute("data-theme", theme);
+
+        document
+          .getElementById("theme-toggle")
+          .setAttribute("data-active", theme);
+
+        setCookie("pref_theme", theme, 365);
+      }
+
       document.addEventListener("DOMContentLoaded", () => {
         const savedLang = getCookie("pref_lang") || "es";
         applyLanguage(savedLang);
 
-        const toggleWrapper = document.getElementById("lang-toggle");
-        toggleWrapper.addEventListener("click", (e) => {
+        const langToggleWrapper = document.getElementById("lang-toggle");
+        langToggleWrapper.addEventListener("click", (e) => {
           if (e.target.classList.contains("lang-btn")) {
             applyLanguage(e.target.getAttribute("data-lang"));
           } else {
-            const currentState = toggleWrapper.getAttribute("data-active");
+            const currentState = langToggleWrapper.getAttribute("data-active");
             applyLanguage(currentState === "en" ? "es" : "en");
+          }
+        });
+
+        const savedTheme = getCookie("pref_theme") || "dark";
+        applyTheme(savedTheme);
+
+        const themeToggleWrapper = document.getElementById("theme-toggle");
+        themeToggleWrapper.addEventListener("click", (e) => {
+          if (e.target.classList.contains("theme-btn")) {
+            applyTheme(e.target.getAttribute("data-theme"));
+          } else {
+            const currentState = themeToggleWrapper.getAttribute("data-active");
+            applyTheme(currentState === "dark" ? "light" : "dark");
           }
         });
       });

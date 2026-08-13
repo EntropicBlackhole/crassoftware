@@ -1,0 +1,427 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+
+const breadcrumbs = [
+  { label: 'tvbox apk installer', url: '/saas/tvbox-apk-installer', isCurrent: true }
+];
+---
+
+<BaseLayout title="cras software / tvbox apk installer" breadcrumbs={breadcrumbs} rootHref="/saas">
+  <section class="hero-section" aria-labelledby="hero-title">
+    <h1 id="hero-title" data-i18n="hero-title">aprovisionamiento zero-touch para android tv.</h1>
+    <p class="hero-subtitle" data-i18n="hero-desc">
+      un cliente nativo de windows en c++ altamente optimizado de 5mb. despliega apks de forma inalámbrica a cualquier tv box android usando descubrimiento mdns y servicios adb integrados. no se requiere línea de comandos.
+    </p>
+    
+    <div class="cta-group">
+      <a href="https://github.com/EntropicBlackhole/saas_downloadables/releases/download/v2.0.5/tvbox_deployer_setup_v2.0.5.exe" class="btn-primary cta-action" data-i18n="hero-cta">descargar para windows</a>
+      <span class="version-tag" data-i18n="hero-tag">v2.0.5 - estable | 4.98 mb</span>
+    </div>
+  </section>
+
+  <section class="showcase-section" aria-label="demostraciones del software">
+    <div class="showcase-grid">
+      <a href="/saas/tvbox-apk-installer/demo" class="btn-ghost" data-i18n="demo-tag">> ver demo</a>
+      <button class="btn-ghost" aria-disabled="true" data-i18n="video-tag">> ver video</button>
+      <div id="dict-footnote" class="demo-not-available" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section class="features-section" aria-label="caracteristicas principales">
+    <div class="bento-grid">
+      <article class="bento-card bento-wide">
+        <h3 data-i18n="bento-1-title"><span class="text-accent">60 veces</span> más productividad</h3>
+        <p data-i18n="bento-1-desc">de 5 minutos a solo 15 segundos por apk. instala un lote de 10 apks en 2-3 minutos en lugar de perder una hora. escala tu producción diaria y maximiza la rentabilidad de tu tiempo sin esfuerzo manual</p>
+      </article>
+      <article class="bento-card">
+        <h3 data-i18n="bento-2-title">los apks son tuyos <span class="text-accent">para siempre</span></h3>
+        <p data-i18n="bento-2-desc">evita portales de anuncios y bucles de redirección de mediafire. escribe un código corto y nuestro analizador regex personalizado extrae el flujo binario sin procesar directamente a tu disco local.</p>
+      </article>
+      <article class="bento-card">
+        <h3 data-i18n="bento-3-title">instalacion 100% <span class="text-accent">inalambrica</span></h3>
+        <p data-i18n="bento-3-desc">nunca ejecutes una versión desactualizada. el cliente consulta de forma segura nuestro oráculo en nodejs y ejecuta un traspaso de proceso silencioso e independiente para actualizar el registro del sistema en segundo plano.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="pricing" class="pricing-section" aria-labelledby="pricing-title">
+    <h2 id="pricing-title" data-i18n="pricing-title">licencias simples y directas</h2>
+    <div class="pricing-grid">
+      <article class="pricing-card">
+        <header>
+          <div class="pricing-tier" data-i18n="pricing-tier-1">standard</div>
+          <div class="pricing-price">S/50<span class="price-unit" data-i18n="pricing-tier-1-unit"> /mo</span></div>
+        </header>
+        <ul class="pricing-features" role="list">
+          <li data-i18n="feat-1.1">licencia vitalicia para 1 pc</li>
+          <li data-i18n="feat-1.2">ideal para tecnicos independientes</li>
+          <li data-i18n="feat-1.3">recuperas tu inversion rapidamente</li>
+        </ul>
+      </article>
+
+      <article class="pricing-card highlight">
+        <header>
+          <div class="pricing-tier" data-i18n="pricing-tier-2">oferta</div>
+          <div class="pricing-price">S/75<span class="price-unit" data-i18n="pricing-tier-2-unit"> /one-time</span></div>
+        </header>
+        <ul class="pricing-features" role="list">
+          <li data-i18n="feat-2.1">licencias vitalicias para 2 pcs</li>
+          <li data-i18n="feat-2.2">ideal para tiendas fisicas con dos tecnicos</li>
+          <li data-i18n="feat-2.3">ahorras S/25 en tu segunda estacion de trabajo</li>
+        </ul>
+      </article>
+    </div>
+    
+    <div class="pricing-action">
+      <a href="https://wa.me/51917862194" class="btn-primary" target="_blank" rel="noopener noreferrer" data-i18n="pricing-btn">contactar ventas</a>
+    </div>
+  </section>
+
+  <section class="compatibility-section" aria-labelledby="compat-title">
+    <h2 id="compat-title" data-i18n="table-header">compatibilidad de hardware</h2>
+    <div class="table-container" tabindex="0" role="region" aria-label="tabla de dispositivos compatibles">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th scope="col" data-i18n="table-col-1">dispositivo</th>
+            <th scope="col" data-i18n="table-col-2">requisito de sistema</th>
+            <th scope="col" data-i18n="table-col-3">estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>walmart watchonn 4k+ streaming box</td>
+            <td data-i18n="table-req">android 11+ (depuración inalámbrica)</td>
+            <td><span class="badge badge-supported" data-i18n="status-supported">soportado</span></td>
+          </tr>
+          <tr>
+            <td>xiaomi mi box s (2nd gen)</td>
+            <td data-i18n="table-req">android 11+ (depuración inalámbrica)</td>
+            <td><span class="badge badge-supported" data-i18n="status-supported">soportado</span></td>
+          </tr>
+          <tr>
+            <td data-i18n="table-generic">tv boxes genéricos (android tv)</td>
+            <td data-i18n=""></td>
+            <td><span class="badge badge-unconfirmed" data-i18n="status-unconfirmed">sin confirmar</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero-section {
+    max-width: var(--max-width);
+    margin: var(--space-8) auto var(--space-6);
+    text-align: center;
+    padding: 0 var(--space-4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+  }
+
+  .hero-section h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    letter-spacing: -0.05em;
+    line-height: 1.1;
+  }
+
+  .hero-subtitle {
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    max-width: 600px;
+  }
+
+  .cta-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+  }
+
+  .btn-primary {
+    background: var(--text-main);
+    color: var(--bg-base);
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: var(--space-3) var(--space-5);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+    border: 2px solid transparent;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    background: var(--accent-action);
+    color: var(--bg-base);
+  }
+
+  .version-tag {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  .showcase-section {
+    max-width: 450px;
+    margin: 0 auto var(--space-6);
+    padding: 0 var(--space-4);
+  }
+
+  .showcase-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+  }
+
+  .btn-ghost {
+    border: 1px solid var(--border-dim);
+    background: transparent;
+    padding: var(--space-3);
+    text-align: center;
+    color: var(--text-main);
+    text-decoration: none;
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    border-radius: var(--radius-sm);
+    transition: border-color 0.2s ease, color 0.2s ease;
+    cursor: pointer;
+  }
+
+  .btn-ghost:hover:not([aria-disabled="true"]) {
+    border-color: var(--accent-base);
+    color: var(--accent-base);
+  }
+
+  .btn-ghost[aria-disabled="true"] {
+    border-color: var(--bg-surface-hover);
+    color: var(--text-muted);
+    cursor: not-allowed;
+  }
+
+  .features-section, .pricing-section, .compatibility-section {
+    max-width: var(--max-width);
+    margin: 0 auto var(--space-8);
+    padding: 0 var(--space-4);
+  }
+
+  .bento-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+  }
+
+  .bento-wide {
+    grid-column: span 2;
+  }
+
+  .bento-card {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-dim);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    transition: border-color 0.2s;
+  }
+
+  .bento-card:hover {
+    border-color: var(--accent-base);
+  }
+
+  .bento-card h3 {
+    margin-bottom: var(--space-3);
+    font-size: 1.3rem;
+  }
+
+  .text-accent {
+    color: var(--accent-base);
+  }
+
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-4);
+    margin-top: var(--space-5);
+  }
+
+  .pricing-card {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-dim);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pricing-card.highlight {
+    border-color: var(--accent-base);
+  }
+
+  .pricing-card.highlight::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background-color: var(--accent-base);
+  }
+
+  .pricing-tier {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--space-3);
+  }
+
+  .pricing-price {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: var(--space-4);
+    letter-spacing: -0.03em;
+  }
+
+  .price-unit {
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  .pricing-features {
+    list-style: none;
+    margin-bottom: var(--space-5);
+    flex-grow: 1;
+  }
+
+  .pricing-features li {
+    margin-bottom: var(--space-2);
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .pricing-features li::before {
+    content: "✓";
+    color: var(--accent-base);
+    font-weight: bold;
+  }
+
+  .pricing-action {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--space-5);
+  }
+
+  .table-container {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-dim);
+    border-radius: var(--radius-lg);
+    overflow-x: auto;
+  }
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    min-width: 600px; 
+  }
+
+  th, td {
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--border-dim);
+  }
+
+  th {
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .badge-supported {
+    background-color: oklch(from var(--accent-base) l c h / 10%);
+    border: 1px solid oklch(from var(--accent-base) l c h / 25%);
+    color: var(--accent-base);
+  }
+
+  .badge-unconfirmed {
+    background-color: rgba(245, 166, 35, 0.1);
+    border: 1px solid rgba(245, 166, 35, 0.25);
+    color: #f5a623;
+  }
+
+  @media (max-width: 1023px) {
+    .bento-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .bento-wide {
+      grid-column: span 2;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .bento-grid {
+      grid-template-columns: 1fr;
+    }
+    .bento-wide {
+      grid-column: span 1;
+    }
+    .pricing-price {
+      font-size: 2.5rem;
+    }
+  }
+
+  /* Base card structural update */
+  .bento-card, .product-card {
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  /* The hyperplexed mouse-tracking glow */
+  .bento-card::before, .product-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px; /* The thickness of the glowing border */
+    background: radial-gradient(
+      400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      oklch(from var(--accent-base) l c h / 40%),
+      transparent 40%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .bento-card:hover::before, .product-card:hover:not(.disabled-card)::before {
+    opacity: 1;
+  }
+</style>
