@@ -12,7 +12,8 @@ export const i18nData = {
     "product-title": "zero-touch android tv provisioning.",
     "product-desc":
       "a highly optimized, 5mb native c++ windows client. wirelessly deploy apks to any android tv box using mdns discovery and embedded adb daemons. no command line required.",
-
+    "status-live": "ACTIVE",
+    "status-dev": "INDEV",
     "prod-1-desc":
       "zero-touch provisioning for android tv devices. deploy apks concurrently through your local network using 'multicast mdns' and adb integrades services",
     "prod-2-desc":
@@ -87,6 +88,8 @@ export const i18nData = {
     "product-title": "aprovisionamiento zero-touch para android tv.",
     "product-desc":
       "un cliente nativo de windows en c++ altamente optimizado de 5mb. despliega apks de forma inalámbrica a cualquier tv box android usando descubrimiento mdns y servicios adb integrados. no se requiere línea de comandos.",
+    "status-live": "ACTIVO",
+    "status-dev": "EN DESARROLLO",
     "prod-1-desc":
       "aprovisionamiento zero-touch para dispositivos android tv. despliega apks concurrentemente a través de tu red local utilizando 'multicast mdns' y servicios adb integrados",
     "prod-2-desc":
