@@ -29,26 +29,28 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           <span class="tag-pill" role="listitem" data-tag="android">android</span>
           <span class="tag-pill" role="listitem" data-tag="wireless">wireless</span>
           <span class="tag-pill" role="listitem" data-tag="c++">c++</span>
+          <span class="tag-pill" role="listitem" data-tag="tool">tool</span>
         </div>
         <div class="product-link" data-i18n="btn-view">ver detalles</div>
       </a>
 
       <div class="product-card disabled-card" aria-disabled="true">
         <header class="product-header">
-          <h2 class="product-title">tvbox os agilizer</h2>
+          <h2 class="product-title">remote console</h2>
           <div class="product-status status-dev" data-i18n="status-dev">
             en desarrollo
           </div>
         </header>
         <p class="product-desc" data-i18n="prod-2-desc">
-          software de prueba para agilizar configuracion a nivel de sistema operativo en los tvbox android, bajando el tiempo de configuracion de un tvbox de 50 minutos a 3 minutos
+          software para ejectuar y usar la consola de una maquina desde un host, despliegando un simple programa 'agent' en cualquier maquina, convirtiendola en un nodo más
         </p>
         <div class="tag-container" role="list">
-          <span class="tag-pill" role="listitem">b2b</span>
-          <span class="tag-pill" role="listitem">android</span>
-          <span class="tag-pill" role="listitem">c++</span>
-          <span class="tag-pill" role="listitem">os</span>
-          <span class="tag-pill" role="listitem">hacking</span>
+          <span class="tag-pill" role="listitem" data-tag="windows">windows</span>
+          <span class="tag-pill" role="listitem" data-tag="b2c">b2c</span>
+          <span class="tag-pill" role="listitem" data-tag="go">go</span>
+          <span class="tag-pill" role="listitem" data-tag="console">console</span>
+          <span class="tag-pill" role="listitem" data-tag="wireless">wireless</span>
+          <span class="tag-pill" role="listitem" data-tag="tool">tool</span>
         </div>
         <div class="product-link link-locked" data-i18n="btn-locked">
           acceso restringido
@@ -216,18 +218,43 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     margin-bottom: 24px;
   }
 
+
   .tag-pill[data-tag="c++"] {
     background: oklch(0.6721 0.101 250.8);
     color: white;
   }
 
+  .tag-pill[data-tag="go"] {
+    background: oklch(0.695 0.130 223.9);
+    color: white;
+  }
+
+
   .tag-pill[data-tag="android"] {
     background: #3DDC84;
     color: black;
   }
+  .tag-pill[data-tag="windows"] {
+    background: oklch(0.568 0.167 251.3);
+    color: white;
+  }
+
+
   .tag-pill[data-tag="b2b"] {
     background: oklch(0.5838 0.2146 250.8);
     color: white;
+  }
+
+  .tag-pill[data-tag="b2c"] {
+    background: oklch(67.106% 0.19677 43.536);
+    color: white;
+  }
+  
+
+  .tag-pill[data-tag="console"] {
+    background: oklch(0.12 0.01 200);
+    color: oklch(0.82 0.22 142);
+    border: 1px solid oklch(0.25 0.02 180);
   }
 
   .tag-pill {

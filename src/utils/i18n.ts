@@ -13,6 +13,11 @@ export const i18nData = {
     "product-desc":
       "a highly optimized, 5mb native c++ windows client. wirelessly deploy apks to any android tv box using mdns discovery and embedded adb daemons. no command line required.",
 
+    "prod-1-desc":
+      "zero-touch provisioning for android tv devices. deploy apks concurrently through your local network using 'multicast mdns' and adb integrades services",
+    "prod-2-desc":
+      "software to execute and use the console of a windows machine from a host, deploying a simple 'agent' program on any machine, turning it into an additional node",
+
     "hero-cta": "download for windows",
     "hero-tag": "v2.0.5 - stable | 4.98 mb",
     "demo-tag": "> see demo",
@@ -82,7 +87,10 @@ export const i18nData = {
     "product-title": "aprovisionamiento zero-touch para android tv.",
     "product-desc":
       "un cliente nativo de windows en c++ altamente optimizado de 5mb. despliega apks de forma inalámbrica a cualquier tv box android usando descubrimiento mdns y servicios adb integrados. no se requiere línea de comandos.",
-
+    "prod-1-desc":
+      "aprovisionamiento zero-touch para dispositivos android tv. despliega apks concurrentemente a través de tu red local utilizando 'multicast mdns' y servicios adb integrados",
+    "prod-2-desc":
+      "software para ejectuar y usar la consola de una maquina desde un host, despliegando un simple programa 'agent' en cualquier maquina, convirtiendola en un nodo adicional",
     "hero-cta": "descargar para windows",
     "hero-tag": "v2.0.5 - estable | 4.98 mb",
     "demo-tag": "> ver demo",
