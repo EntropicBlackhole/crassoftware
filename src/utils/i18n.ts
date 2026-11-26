@@ -20,7 +20,7 @@ export const i18nData = {
       "software to execute and use the console of a windows machine from a host, deploying a simple 'agent' program on any machine, turning it into an additional node",
 
     "hero-cta": "download for windows",
-    "hero-tag": "v2.0.5 - stable | 4.98 mb",
+    "hero-tag": "v3.0.0 - stable | 5.02 mb",
     "demo-tag": "> see demo",
     "video-tag": "> see video",
     "bento-1-title": "be <span class='text-accent'>95% faster</span>",
@@ -95,7 +95,7 @@ export const i18nData = {
     "prod-2-desc":
       "software para ejectuar y usar la consola de una maquina desde un host, despliegando un simple programa 'agent' en cualquier maquina, convirtiendola en un nodo adicional",
     "hero-cta": "descargar para windows",
-    "hero-tag": "v2.0.5 - estable | 4.98 mb",
+    "hero-tag": "v3.0.0 - estable | 5.02 mb",
     "demo-tag": "> ver demo",
     "video-tag": "> ver video",
     "bento-1-title":
